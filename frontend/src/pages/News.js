@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import Navbar from '../components/Navbar';
 import './News.css';
 
 const News = () => {
@@ -32,23 +33,38 @@ const News = () => {
   }, []);
 
   if (loading) {
-    return <div className="loading">Загрузка новостей...</div>;
+    return (
+      <div className="app">
+        <Navbar />
+        <div className="main-content">
+          <div className="loading">Загрузка новостей...</div>
+        </div>
+      </div>
+    );
   }
 
   return (
-    <div className="news-container">
-      <h1>Новости предприятия</h1>
-      <div className="news-list">
-        {news.map(item => (
-          <div key={item.id} className="news-item">
-            <h2>{item.title}</h2>
-            <p className="news-content">{item.content}</p>
-            <div className="news-meta">
-              <span className="news-date">{item.date}</span>
-              <span className="news-author">{item.author}</span>
-            </div>
+    <div className="app">
+      <Navbar />
+      <div className="main-content">
+        <div className="news-container">
+          <section className="hero">
+            <h1>Новости предприятия</h1>
+            <p>Актуальные события и объявления</p>
+          </section>
+          <div className="news-list">
+            {news.map(item => (
+              <div key={item.id} className="news-item">
+                <h2>{item.title}</h2>
+                <p className="news-content">{item.content}</p>
+                <div className="news-meta">
+                  <span className="news-date">{item.date}</span>
+                  <span className="news-author">{item.author}</span>
+                </div>
+              </div>
+            ))}
           </div>
-        ))}
+        </div>
       </div>
     </div>
   );

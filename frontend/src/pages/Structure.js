@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import Layout from '../components/Layout';
+import Navbar from '../components/Navbar';
 import './Structure.css';
 
 const Structure = () => {
@@ -36,33 +36,45 @@ const Structure = () => {
   }, []);
 
   if (loading) {
-    return <Layout><div className="loading">Загрузка...</div></Layout>;
+    return (
+      <div className="app">
+        <Navbar />
+        <div className="main-content">
+          <div className="loading">Загрузка...</div>
+        </div>
+      </div>
+    );
   }
 
   return (
-    <Layout>
-      <div className="structure-container">
-        <h1>Структура предприятия</h1>
-        <div className="structure-tree">
-          <div className="company-name">{structure.name}</div>
-          <div className="departments">
-            {structure.departments.map(dept => (
-              <div key={dept.id} className="department">
-                <div className="department-name">{dept.name}</div>
-                <div className="employees">
-                  {dept.employees.map(emp => (
-                    <div key={emp.id} className="employee">
-                      <div className="employee-name">{emp.name}</div>
-                      <div className="employee-position">{emp.position}</div>
-                    </div>
-                  ))}
+    <div className="app">
+      <Navbar />
+      <div className="main-content">
+        <div className="structure-container">
+          <section className="hero">
+            <h1>Структура предприятия</h1>
+            <p>Организационная структура АО "НСРЗ"</p>
+          </section>
+          <div className="structure-tree">
+            <div className="departments">
+              {structure.departments.map(dept => (
+                <div key={dept.id} className="department">
+                  <div className="department-name">{dept.name}</div>
+                  <div className="employees">
+                    {dept.employees.map(emp => (
+                      <div key={emp.id} className="employee">
+                        <div className="employee-name">{emp.name}</div>
+                        <div className="employee-position">{emp.position}</div>
+                      </div>
+                    ))}
+                  </div>
                 </div>
-              </div>
-            ))}
+              ))}
+            </div>
           </div>
         </div>
       </div>
-    </Layout>
+    </div>
   );
 };
 

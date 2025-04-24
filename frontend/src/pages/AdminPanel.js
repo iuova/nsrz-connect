@@ -6,7 +6,10 @@ const AdminPanel = () => {
 
   return (
     <div className="admin-panel">
-      <h1>Панель администратора</h1>
+      <section className="hero">
+        <h1>Панель администратора</h1>
+        <p>Управление пользователями и контентом</p>
+      </section>
       
       <div className="admin-tabs">
         <button 

@@ -7,6 +7,9 @@ const Navbar = () => {
   const location = useLocation();
   const { user, isAdmin, logout } = useAuth();
 
+  // Получаем первую букву имени пользователя
+  const userInitial = user?.name ? user.name.charAt(0) : '';
+
   return (
     <nav className="navbar">
       <div className="navbar-container">
@@ -54,7 +57,7 @@ const Navbar = () => {
           )}
         </div>
         <div className="navbar-user">
-          <span className="user-name">{user?.name}</span>
+          <span className="user-initial">{userInitial}</span>
           <button onClick={logout} className="logout-button">Выйти</button>
         </div>
       </div>

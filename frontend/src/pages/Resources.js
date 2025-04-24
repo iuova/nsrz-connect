@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import Navbar from '../components/Navbar';
 import './Resources.css';
 
 const Resources = () => {
@@ -25,39 +26,54 @@ const Resources = () => {
   }, []);
 
   if (loading) {
-    return <div className="loading">Загрузка данных...</div>;
+    return (
+      <div className="app">
+        <Navbar />
+        <div className="main-content">
+          <div className="loading">Загрузка данных...</div>
+        </div>
+      </div>
+    );
   }
 
   return (
-    <div className="resources">
-      <h1>Ресурсы сотрудника</h1>
-      
-      <div className="vacation-info">
-        <div className="employee-card">
-          <h2>{vacationData.employee}</h2>
-          <p className="position">{vacationData.position}</p>
-        </div>
-
-        <div className="vacation-stats">
-          <div className="stat-card">
-            <h3>Осталось дней отпуска</h3>
-            <div className="stat-value">{vacationData.vacationDays.remaining}</div>
-          </div>
+    <div className="app">
+      <Navbar />
+      <div className="main-content">
+        <div className="resources-container">
+          <section className="hero">
+            <h1>Ресурсы сотрудника</h1>
+            <p>Информация об отпусках и других ресурсах</p>
+          </section>
           
-          <div className="stat-card">
-            <h3>Использовано дней</h3>
-            <div className="stat-value">{vacationData.vacationDays.used}</div>
-          </div>
-          
-          <div className="stat-card">
-            <h3>Всего дней в году</h3>
-            <div className="stat-value">{vacationData.vacationDays.total}</div>
-          </div>
-        </div>
+          <div className="vacation-info">
+            <div className="employee-card">
+              <h2>{vacationData.employee}</h2>
+              <p className="position">{vacationData.position}</p>
+            </div>
 
-        <div className="next-vacation">
-          <h3>Следующий отпуск</h3>
-          <p>{vacationData.nextVacation}</p>
+            <div className="vacation-stats">
+              <div className="stat-card">
+                <h3>Осталось дней отпуска</h3>
+                <div className="stat-value">{vacationData.vacationDays.remaining}</div>
+              </div>
+              
+              <div className="stat-card">
+                <h3>Использовано дней</h3>
+                <div className="stat-value">{vacationData.vacationDays.used}</div>
+              </div>
+              
+              <div className="stat-card">
+                <h3>Всего дней в году</h3>
+                <div className="stat-value">{vacationData.vacationDays.total}</div>
+              </div>
+            </div>
+
+            <div className="next-vacation">
+              <h3>Следующий отпуск</h3>
+              <p>{vacationData.nextVacation}</p>
+            </div>
+          </div>
         </div>
       </div>
     </div>
