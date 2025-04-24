@@ -1,0 +1,1 @@
+app.use('/uploads', express.static('public/uploads')); 
