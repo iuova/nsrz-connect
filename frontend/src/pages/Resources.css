@@ -1,0 +1,87 @@
+.resources {
+  padding: 2rem 0;
+}
+
+.resources h1 {
+  margin-bottom: 2rem;
+  color: #2c3e50;
+}
+
+.vacation-info {
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.employee-card {
+  background: white;
+  padding: 2rem;
+  border-radius: 12px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+  margin-bottom: 2rem;
+}
+
+.employee-card h2 {
+  color: #2c3e50;
+  margin-bottom: 0.5rem;
+}
+
+.position {
+  color: #6c7a89;
+}
+
+.vacation-stats {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1.5rem;
+  margin-bottom: 2rem;
+}
+
+.stat-card {
+  background: white;
+  padding: 1.5rem;
+  border-radius: 12px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+  text-align: center;
+}
+
+.stat-card h3 {
+  color: #6c7a89;
+  font-size: 1rem;
+  margin-bottom: 1rem;
+}
+
+.stat-value {
+  font-size: 2.5rem;
+  font-weight: 600;
+  color: #3498db;
+}
+
+.next-vacation {
+  background: white;
+  padding: 1.5rem;
+  border-radius: 12px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+}
+
+.next-vacation h3 {
+  color: #2c3e50;
+  margin-bottom: 0.5rem;
+}
+
+.next-vacation p {
+  color: #3498db;
+  font-size: 1.2rem;
+  font-weight: 500;
+}
+
+.loading {
+  text-align: center;
+  padding: 2rem;
+  color: #6c7a89;
+}
+
+@media (max-width: 768px) {
+  .vacation-stats {
+    grid-template-columns: 1fr;
+  }
+} 
