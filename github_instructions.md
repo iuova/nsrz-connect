@@ -10,7 +10,15 @@ cd /Users/mac/nsrz-connect
 git init
 ```
 
-## Шаг 2: Создание репозитория на GitHub
+## Шаг 2: Настройка Git (если не настроено)
+
+```bash
+# Установите ваше имя и email
+git config --global user.name "uniov"
+git config --global user.email "ваш_email@example.com"
+```
+
+## Шаг 3: Создание репозитория на GitHub
 
 1. Перейдите на [GitHub](https://github.com)
 2. Войдите в свой аккаунт (username: uniov)
@@ -21,7 +29,7 @@ git init
 7. НЕ инициализируйте репозиторий с README, .gitignore или лицензией
 8. Нажмите "Create repository"
 
-## Шаг 3: Подготовка локального репозитория
+## Шаг 4: Подготовка локального репозитория
 
 ```bash
 # Добавьте все файлы в область подготовки
@@ -31,37 +39,46 @@ git add .
 git commit -m "Initial commit"
 ```
 
-## Шаг 4: Связывание локального репозитория с GitHub
+## Шаг 5: Исправление ошибки push и отправка кода на GitHub
+
+Если вы получили ошибку "src refspec main does not match any", выполните следующие шаги:
 
 ```bash
+# Проверьте, какая у вас основная ветка
+git branch
+
+# Если ветки не видно, создайте ветку main и переключитесь на нее
+git checkout -b main
+
+# Или если у вас есть ветка master, но нет main:
+# git branch -M main
+
 # Добавьте удаленный репозиторий
 git remote add origin https://github.com/uniov/nsrz-connect.git
 
-# Для работы через SSH используйте следующую команду вместо предыдущей
+# Для работы через SSH используйте:
 # git remote add origin git@github.com:uniov/nsrz-connect.git
-```
 
-## Шаг 5: Отправка кода на GitHub
-
-```bash
-# Отправьте код в основную ветку (main или master)
+# Отправьте код в ветку main
 git push -u origin main
-
-# Если у вас ветка называется master, используйте:
-# git push -u origin master
 ```
 
-## Дополнительные шаги (если необходимо)
+## Если проблема все еще не решена:
 
-### Настройка Git (если не настроено)
+Если у вас по-прежнему возникает ошибка, попробуйте следующее:
 
 ```bash
-# Установите ваше имя и email
-git config --global user.name "uniov"
-git config --global user.email "ваш_email@example.com"
+# Проверьте, есть ли у вас коммиты
+git log
+
+# Если коммитов нет (пустой репозиторий), создайте пустой коммит
+git commit --allow-empty -m "Initial empty commit"
+
+# Затем снова попробуйте отправить
+git push -u origin main
 ```
 
-### Настройка аутентификации
+## Настройка аутентификации (если необходимо)
 
 Для работы с GitHub вам понадобится настроить аутентификацию:
 
