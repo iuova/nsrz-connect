@@ -98,7 +98,10 @@ const UserManagement = () => {
     <div className="user-management">
       <div className="section-header">
         <h2>Управление пользователями</h2>
-        <button className="add-button" onClick={() => setShowAddForm(true)}>
+        <button 
+          className="add-button"
+          onClick={() => setShowAddForm(true)}
+        >
           Добавить пользователя
         </button>
       </div>
@@ -255,81 +258,17 @@ const NewsManagement = () => {
     }
   ]);
   const [showAddForm, setShowAddForm] = useState(false);
-  const [newNews, setNewNews] = useState({ 
-    title: '', 
-    content: '' 
-  });
-  const [editingNewsId, setEditingNewsId] = useState(null);
-  const [editNewsData, setEditNewsData] = useState({ 
-    title: '', 
-    content: '' 
+  const [showEditForm, setShowEditForm] = useState(false);
+  const [newNews, setNewNews] = useState({ title: '', content: '' });
+  const [editingNews, setEditingNews] = useState({ 
+    id: null,
+    title: '',
+    content: '',
+    date: '',
+    author: ''
   });
   const quillRef = useRef(null);
   const editQuillRef = useRef(null);
-
-  // Безопасный обработчик изменений для Quill
-  const handleContentChange = (content, delta, source, editor) => {
-    setNewNews(prev => ({
-      ...prev,
-      content: editor.getHTML()
-    }));
-  };
-
-  // Обработчик изменений для редактирования
-  const handleEditContentChange = (content, delta, source, editor) => {
-    setEditNewsData(prev => ({
-      ...prev,
-      content: editor.getHTML()
-    }));
-  };
-
-  // Добавление новости
-  const handleAddNews = (e) => {
-    e.preventDefault();
-    const currentDate = new Date().toISOString().split('T')[0];
-    setNews([...news, { 
-      ...newNews, 
-      id: news.length + 1,
-      date: currentDate,
-      author: 'Администратор'
-    }]);
-    setNewNews({ title: '', content: '' });
-    setShowAddForm(false);
-  };
-
-  // Удаление новости
-  const handleDeleteNews = (newsId) => {
-    if (window.confirm('Вы уверены, что хотите удалить эту новость?')) {
-      setNews(news.filter(item => item.id !== newsId));
-    }
-  };
-
-  // Начало редактирования
-  const handleStartEdit = (newsItem) => {
-    setEditingNewsId(newsItem.id);
-    setEditNewsData({
-      title: newsItem.title,
-      content: newsItem.content
-    });
-  };
-
-  // Сохранение изменений
-  const handleSaveEdit = (newsId) => {
-    setNews(news.map(item => 
-      item.id === newsId ? { 
-        ...item, 
-        title: editNewsData.title,
-        content: editNewsData.content,
-        date: new Date().toISOString().split('T')[0] // Обновляем дату
-      } : item
-    ));
-    setEditingNewsId(null);
-  };
-
-  // Отмена редактирования
-  const handleCancelEdit = () => {
-    setEditingNewsId(null);
-  };
 
   // Конфигурация Quill
   const modules = {
@@ -354,15 +293,72 @@ const NewsManagement = () => {
     'link', 'image'
   ];
 
+  // Добавление новости
+  const handleAddNews = (e) => {
+    e.preventDefault();
+    const currentDate = new Date().toISOString().split('T')[0];
+    setNews([...news, { 
+      ...newNews, 
+      id: news.length + 1,
+      date: currentDate,
+      author: 'Администратор'
+    }]);
+    setNewNews({ title: '', content: '' });
+    setShowAddForm(false);
+  };
+
+  // Удаление новости
+  const handleDeleteNews = (newsId) => {
+    if (window.confirm('Вы уверены, что хотите удалить эту новость?')) {
+      setNews(news.filter(item => item.id !== newsId));
+    }
+  };
+
+  // Начало редактирования
+  const handleStartEdit = (newsItem) => {
+    setEditingNews({
+      id: newsItem.id,
+      title: newsItem.title,
+      content: newsItem.content,
+      date: newsItem.date,
+      author: newsItem.author
+    });
+    setShowEditForm(true);
+  };
+
+  // Сохранение изменений
+  const handleSaveEdit = (e) => {
+    e.preventDefault();
+    const currentDate = new Date().toISOString().split('T')[0];
+    setNews(news.map(item => 
+      item.id === editingNews.id ? { 
+        ...item, 
+        title: editingNews.title,
+        content: editingNews.content,
+        date: currentDate // Обновляем дату
+      } : item
+    ));
+    setShowEditForm(false);
+  };
+
+  // Отмена редактирования
+  const handleCancelEdit = () => {
+    setShowEditForm(false);
+  };
+
   return (
     <div className="news-management">
       <div className="section-header">
         <h2>Управление новостями</h2>
-        <button className="add-button" onClick={() => setShowAddForm(true)}>
+        <button 
+          className="add-button"
+          onClick={() => setShowAddForm(true)}
+        >
           Добавить новость
         </button>
       </div>
 
+      {/* Форма добавления новости */}
       {showAddForm && (
         <div className="add-form-container">
           <form onSubmit={handleAddNews} className="add-form">
@@ -381,7 +377,7 @@ const NewsManagement = () => {
               <ReactQuill
                 ref={quillRef}
                 value={newNews.content}
-                onChange={handleContentChange}
+                onChange={(content) => setNewNews({...newNews, content})}
                 modules={modules}
                 formats={formats}
                 theme="snow"
@@ -403,71 +399,70 @@ const NewsManagement = () => {
         </div>
       )}
 
+      {/* Форма редактирования новости */}
+      {showEditForm && (
+        <div className="add-form-container">
+          <form onSubmit={handleSaveEdit} className="add-form">
+            <h3>Редактировать новость</h3>
+            <div className="form-group">
+              <label>Заголовок</label>
+              <input
+                type="text"
+                value={editingNews.title}
+                onChange={(e) => setEditingNews({...editingNews, title: e.target.value})}
+                required
+              />
+            </div>
+            <div className="form-group">
+              <label>Содержание</label>
+              <ReactQuill
+                ref={editQuillRef}
+                value={editingNews.content}
+                onChange={(content) => setEditingNews({...editingNews, content})}
+                modules={modules}
+                formats={formats}
+                theme="snow"
+                style={{ minHeight: '200px', backgroundColor: 'white' }}
+              />
+            </div>
+            <div className="form-buttons">
+              <button type="submit" className="submit-button">Сохранить</button>
+              <button 
+                type="button" 
+                onClick={handleCancelEdit}
+                className="cancel-button"
+              >
+                Отмена
+              </button>
+            </div>
+          </form>
+        </div>
+      )}
+
       <div className="news-list">
         {news.map(item => (
           <div key={item.id} className="news-card">
             <div className="news-info">
-              {editingNewsId === item.id ? (
-                <>
-                  <input
-                    type="text"
-                    value={editNewsData.title}
-                    onChange={(e) => setEditNewsData({...editNewsData, title: e.target.value})}
-                    className="edit-input"
-                  />
-                  <ReactQuill
-                    ref={editQuillRef}
-                    value={editNewsData.content}
-                    onChange={handleEditContentChange}
-                    modules={modules}
-                    formats={formats}
-                    theme="snow"
-                    style={{ minHeight: '200px', backgroundColor: 'white' }}
-                  />
-                </>
-              ) : (
-                <>
-                  <h3>{item.title}</h3>
-                  <div dangerouslySetInnerHTML={{ __html: item.content }} />
-                  <div className="news-meta">
-                    <span>Обновлено: {item.date}</span>
-                    <span>{item.author}</span>
-                  </div>
-                </>
-              )}
+              <h3>{item.title}</h3>
+              <div dangerouslySetInnerHTML={{ __html: item.content }} />
+              <div className="news-meta">
+                <span>Обновлено: {item.date}</span>
+                <span>{item.author}</span>
+              </div>
             </div>
             <div className="news-actions">
-              {editingNewsId === item.id ? (
-                <>
-                  <button 
-                    className="save-button"
-                    onClick={() => handleSaveEdit(item.id)}
-                  >
-                    Сохранить
-                  </button>
-                  <button 
-                    className="cancel-button"
-                    onClick={handleCancelEdit}
-                  >
-                    Отмена
-                  </button>
-                </>
-              ) : (
-                <>
-                  <button 
-                    className="edit-button"
-                    onClick={() => handleStartEdit(item)}
-                  >
-                    Редактировать
-                  </button>
-                  <button 
-                    className="delete-button"
-                    onClick={() => handleDeleteNews(item.id)}
-                  >
-                    Удалить
-                  </button>
-                </>
-              )}
+              <button 
+                className="edit-button"
+                onClick={() => handleStartEdit(item)}
+              >
+                Редактировать
+              </button>
+              <button 
+                className="delete-button"
+                onClick={() => handleDeleteNews(item.id)}
+              >
+                Удалить
+              </button>
             </div>
           </div>
         ))}
