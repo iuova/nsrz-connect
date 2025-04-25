@@ -52,4 +52,33 @@ router.post('/', async (req, res) => {
   }
 });
 
+router.get('/', async (req, res) => {
+  try {
+    const { published } = req.query;
+    const query = {};
+    
+    if (published === 'true') {
+      query.published = true;
+    }
+
+    const news = await News.find(query).sort({ date: -1 });
+    res.json(news);
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+});
+
+router.patch('/publish', async (req, res) => {
+  try {
+    const { ids } = req.body;
+    await News.updateMany(
+      { _id: { $in: ids } },
+      { $set: { published: true } }
+    );
+    res.json({ success: true });
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+});
+
 module.exports = router; 

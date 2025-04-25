@@ -345,4 +345,72 @@
 
 .cancel-button:hover {
   background-color: #e0e0e0;
+}
+
+/* Стили для нового функционала */
+.news-actions-header {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+
+.publish-button {
+  border: 1px solid;
+  padding: 6px 12px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 14px;
+  transition: all 0.2s ease;
+  background-color: #f3e5f5; /* Светло-сиреневый фон */
+  color: #6a1b9a; /* Тёмно-фиолетовый текст */
+  border-color: #d1c4e9; /* Светлая сиреневая граница */
+}
+
+.publish-button:hover {
+  background-color: #e1bee7; /* Более насыщенный сиреневый при наведении */
+}
+
+.publish-button:disabled {
+  background-color: #f5f5f5;
+  color: #bdbdbd;
+  border-color: #e0e0e0;
+  cursor: not-allowed;
+}
+
+.news-card {
+  display: flex;
+  align-items: flex-start;
+  gap: 15px;
+}
+
+.news-checkbox {
+  margin-top: 5px;
+}
+
+.news-checkbox input {
+  cursor: pointer;
+  width: 18px;
+  height: 18px;
+}
+
+.published-badge {
+  background-color: #e8f5e9;
+  color: #2e7d32;
+  padding: 2px 8px;
+  border-radius: 12px;
+  font-size: 12px;
+  margin-left: 8px;
+}
+
+.news-card.published {
+  border-left: 3px solid #4CAF50;
+  padding-left: 10px;
+}
+
+.icon-publish {
+  display: inline-block;
+  width: 16px;
+  height: 16px;
+  margin-right: 8px;
+  background-image: url('data:image/svg+xml;utf8,<svg fill="%236a1b9a" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M5 4v2h14V4H5zm0 10h4v6h6v-6h4l-7-7-7 7z"/></svg>');
 } 

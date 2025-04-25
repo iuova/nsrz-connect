@@ -254,18 +254,25 @@ const NewsManagement = () => {
       title: 'Обновление системы', 
       content: '<p>Запущена новая версия портала</p>',
       date: '2024-03-20',
-      author: 'Администратор'
+      author: 'Администратор',
+      published: false,
+      selected: false
     }
   ]);
   const [showAddForm, setShowAddForm] = useState(false);
   const [showEditForm, setShowEditForm] = useState(false);
-  const [newNews, setNewNews] = useState({ title: '', content: '' });
+  const [newNews, setNewNews] = useState({ 
+    title: '', 
+    content: '',
+    published: false 
+  });
   const [editingNews, setEditingNews] = useState({ 
     id: null,
     title: '',
     content: '',
     date: '',
-    author: ''
+    author: '',
+    published: false
   });
   const quillRef = useRef(null);
   const editQuillRef = useRef(null);
@@ -292,6 +299,22 @@ const NewsManagement = () => {
     'align',
     'link', 'image'
   ];
+
+  // Переключение выбора новости
+  const toggleSelectNews = (newsId) => {
+    setNews(news.map(item => 
+      item.id === newsId ? { ...item, selected: !item.selected } : item
+    ));
+  };
+
+  // Публикация выбранных новостей
+  const publishSelectedNews = () => {
+    setNews(news.map(item => 
+      item.selected ? { ...item, published: true } : item
+    ));
+    // Здесь можно добавить API-запрос для сохранения изменений на сервере
+    alert('Выбранные новости опубликованы на главной странице!');
+  };
 
   // Добавление новости
   const handleAddNews = (e) => {
@@ -350,12 +373,21 @@ const NewsManagement = () => {
     <div className="news-management">
       <div className="section-header">
         <h2>Управление новостями</h2>
-        <button 
-          className="add-button"
-          onClick={() => setShowAddForm(true)}
-        >
-          Добавить новость
-        </button>
+        <div className="news-actions-header">
+          <button 
+            className="add-button"
+            onClick={() => setShowAddForm(true)}
+          >
+            Добавить новость
+          </button>
+          <button 
+            className="publish-button"
+            onClick={publishSelectedNews}
+            disabled={!news.some(item => item.selected)}
+          >
+            Опубликовать новости
+          </button>
+        </div>
       </div>
 
       {/* Форма добавления новости */}
@@ -441,9 +473,16 @@ const NewsManagement = () => {
 
       <div className="news-list">
         {news.map(item => (
-          <div key={item.id} className="news-card">
+          <div key={item.id} className={`news-card ${item.published ? 'published' : ''}`}>
+            <div className="news-checkbox">
+              <input
+                type="checkbox"
+                checked={item.selected}
+                onChange={() => toggleSelectNews(item.id)}
+              />
+            </div>
             <div className="news-info">
-              <h3>{item.title}</h3>
+              <h3>{item.title} {item.published && <span className="published-badge">Опубликовано</span>}</h3>
               <div dangerouslySetInnerHTML={{ __html: item.content }} />
               <div className="news-meta">
                 <span>Обновлено: {item.date}</span>
