@@ -1,150 +1,72 @@
-import React, { useState, useRef, useEffect } from 'react';
-import ReactQuill from 'react-quill';
-import 'react-quill/dist/quill.snow.css';
-import axios from 'axios';
+import React, { useState } from 'react';
+import { createNews, updateNews } from '../api/newsApi';
+import './NewsEditor.css';
 
-const NewsEditor = ({ initialData = {}, onSave, onCancel }) => {
-  const [title, setTitle] = useState(initialData.title || '');
-  const [content, setContent] = useState(initialData.content || '');
-  const [image, setImage] = useState(initialData.image || null);
-  const [isUploading, setIsUploading] = useState(false);
-  const fileInputRef = useRef(null);
-  const [contentError, setContentError] = useState(null);
-  const [error, setError] = useState(null);
-  const quillRef = useRef(null);
+const NewsEditor = ({ news, onSave, onCancel }) => {
+  const [formData, setFormData] = useState({
+    title: news?.title || '',
+    content: news?.content || ''
+  });
 
-  useEffect(() => {
-    if (quillRef.current) {
-      const editor = quillRef.current.getEditor();
-      editor.on('editor-change', handleContentChange);
-      return () => editor.off('editor-change', handleContentChange);
-    }
-  }, []);
-
-  const handleContentChange = (value, delta, source, editor) => {
-    try {
-      setContent(editor.getHTML());
-    } catch (error) {
-      console.error('Editor error:', error);
-      setContent(value || '');
-    }
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData(prev => ({ ...prev, [name]: value }));
   };
 
-  const modules = {
-    toolbar: [
-      [{ 'header': [1, 2, 3, false] }],
-      ['bold', 'italic', 'underline', 'strike'],
-      [{ 'color': [] }, { 'background': [] }],
-      [{ 'align': [] }],
-      ['link', 'image'],
-      ['clean']
-    ],
-    clipboard: {
-      matchVisual: false,
-    }
-  };
-
-  const formats = [
-    'header',
-    'bold', 'italic', 'underline', 'strike',
-    'color', 'background',
-    'align',
-    'link', 'image'
-  ];
-
-  // Обработчик загрузки изображения
-  const handleImageUpload = async (file) => {
-    // Проверка типа и размера
-    if (!file.type.match('image.*')) {
-      setError('Можно загружать только изображения');
-      return;
-    }
-    
-    const MAX_SIZE = 5 * 1024 * 1024; // 5MB
-    if (file.size > MAX_SIZE) {
-      setError('Изображение должно быть меньше 5MB');
-      return;
-    }
-    
-    setIsUploading(true);
-    const formData = new FormData();
-    formData.append('file', file);
-
-    try {
-      const response = await axios.post('/custom-upload', formData);
-      setImage(response.data.url);
-    } catch (error) {
-      console.error('Ошибка загрузки:', error);
-    } finally {
-      setIsUploading(false);
-    }
-  };
-
-  const handleDrop = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    if (e.dataTransfer.files && e.dataTransfer.files.length) {
-      handleImageUpload(e.dataTransfer.files[0]);
+    try {
+      if (news?.id) {
+        await updateNews(news.id, formData);
+      } else {
+        await createNews(formData);
+      }
+      onSave();
+    } catch (error) {
+      console.error('Error saving news:', error);
     }
   };
-
-  const handlePaste = (e) => {
-    if (e.clipboardData.files && e.clipboardData.files.length) {
-      e.preventDefault();
-      handleImageUpload(e.clipboardData.files[0]);
-    }
-  };
-
-  useEffect(() => {
-    console.log('Current content:', content);
-  }, [content]);
 
   return (
-    <div className="news-editor">
-      <h2>{initialData.id ? 'Редактирование' : 'Создание'} новости</h2>
-      
-      <input
-        type="text"
-        value={title}
-        onChange={(e) => setTitle(e.target.value)}
-        placeholder="Заголовок новости"
-      />
-      
-      <ReactQuill
-        ref={quillRef}
-        value={content}
-        onChange={handleContentChange}
-        modules={modules}
-        formats={formats}
-        placeholder="Текст новости..."
-        theme="snow"
-        bounds=".news-editor"
-        style={{ minHeight: '300px' }}
-      />
+    <div className="editor-modal">
+      <form onSubmit={handleSubmit} className="editor-form">
+        <h2>{news?.id ? 'Edit News' : 'Create News'}</h2>
+        
+        <label>
+          Title:
+          <input
+            type="text"
+            name="title"
+            value={formData.title}
+            onChange={handleChange}
+            required
+          />
+        </label>
 
-      <div className="form-group">
-        <label htmlFor="image-upload">Загрузить изображение</label>
-        <input
-          type="file"
-          ref={fileInputRef}
-          onChange={(e) => {
-            if (e.target.files && e.target.files.length) {
-              handleImageUpload(e.target.files[0]);
-            }
-          }}
-          accept="image/*"
-          id="image-upload"
-          style={{ display: 'none' }}
-        />
-      </div>
+        <label>
+          Content:
+          <textarea
+            name="content"
+            value={formData.content}
+            onChange={handleChange}
+            required
+            rows={10}
+          />
+        </label>
 
-      <div className="editor-actions">
-        <button onClick={() => onSave({ title, content, image })}>
-          Сохранить
-        </button>
-        <button onClick={onCancel}>
-          Отмена
-        </button>
-      </div>
+        <div className="form-actions">
+          <button type="submit" className="btn-save">
+            Save
+          </button>
+          <button 
+            type="button" 
+            onClick={onCancel}
+            className="btn-cancel"
+          >
+            Cancel
+          </button>
+        </div>
+      </form>
     </div>
   );
 };

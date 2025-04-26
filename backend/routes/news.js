@@ -1,7 +1,8 @@
-const express = require('express');
+import express from 'express';
 const router = express.Router();
 const multer = require('multer');
 const path = require('path');
+const News = require('../models/News');
 
 // Configure storage
 const storage = multer.diskStorage({
@@ -43,25 +44,59 @@ router.post('/upload', upload.single('image'), (req, res) => {
 // Create/update news endpoint
 router.post('/', async (req, res) => {
   try {
-    const { title, content, image } = req.body;
-    // Save to database (implementation depends on your DB)
-    const news = await News.create({ title, content, image });
-    res.status(201).json(news);
+    const newsItem = await News.create(req.body);
+    res.status(201).json(newsItem);
   } catch (err) {
     res.status(400).json({ error: err.message });
   }
 });
 
+// Get news endpoint
 router.get('/', async (req, res) => {
   try {
-    const filter = {};
-    if (req.query.published === 'true') {
-      filter.published = true;
-    }
-    const news = await News.find(filter).sort({ date: -1 });
+    const publishedOnly = req.query.published === 'true';
+    const news = await News.getAll(publishedOnly);
     res.json(news);
   } catch (err) {
-    res.status(500).json({ message: err.message });
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// Update news endpoint
+router.put('/:id', async (req, res) => {
+  try {
+    const updated = await News.update(req.params.id, req.body);
+    if (updated) {
+      res.json(updated);
+    } else {
+      res.status(404).json({ error: 'News not found' });
+    }
+  } catch (err) {
+    res.status(400).json({ error: err.message });
+  }
+});
+
+// Delete news endpoint
+router.delete('/:id', async (req, res) => {
+  try {
+    const success = await News.delete(req.params.id);
+    if (success) {
+      res.json({ success: true });
+    } else {
+      res.status(404).json({ error: 'News not found' });
+    }
+  } catch (err) {
+    res.status(400).json({ error: err.message });
+  }
+});
+
+// Publish multiple news endpoint
+router.post('/publish', async (req, res) => {
+  try {
+    const count = await News.publishMultiple(req.body.ids);
+    res.json({ published: count });
+  } catch (err) {
+    res.status(400).json({ error: err.message });
   }
 });
 
