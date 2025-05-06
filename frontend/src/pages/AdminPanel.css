@@ -517,4 +517,37 @@ button.published {
 .btn-delete {
   background: #f44336;
   color: white;
+}
+
+.news-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 20px;
+}
+
+.news-table th, .news-table td {
+  border: 1px solid #ddd;
+  padding: 8px;
+  text-align: left;
+}
+
+.news-table th {
+  background-color: #f4f4f4;
+}
+
+.pagination {
+  margin-top: 20px;
+  display: flex;
+  gap: 5px;
+}
+
+.pagination button {
+  padding: 5px 10px;
+  cursor: pointer;
+  border: 1px solid #ddd;
+  background-color: #f9f9f9;
+}
+
+.pagination button:hover {
+  background-color: #ddd;
 } 
