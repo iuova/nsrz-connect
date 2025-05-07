@@ -17,5 +17,7 @@ const testRequire = (modulePath) => {
 testRequire('./db/initDB');
 testRequire('./models/News');
 testRequire('./routes/news');
+testRequire('./models/Users');
+testRequire('./routes/users');
 console.log("Версия express:", require('express').version);
 console.log("better-sqlite3:", require('better-sqlite3') ? "OK" : "Ошибка");

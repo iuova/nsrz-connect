@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import axios from 'axios';
 import './Login.css';
 
 const Login = () => {
@@ -15,31 +16,25 @@ const Login = () => {
     setError('');
 
     try {
-      if (email === 'admin@nsrz.ru' && password === 'admin') {
-        const userData = {
-          id: 1,
-          email,
-          role: 'admin',
-          name: 'Администратор'
-        };
-        login(userData);
-        navigate('/');
-        return;
-      }
-      
-      if (email === 'user@nsrz.ru' && password === 'user') {
-        const userData = {
-          id: 2,
-          email,
-          role: 'employee',
-          name: 'Сотрудник'
-        };
-        login(userData);
-        navigate('/');
-        return;
-      }
+      // Отправляем запрос на сервер для проверки данных
+      const response = await axios.post('http://localhost:5000/api/users/login', {
+        email,
+        password
+      });
 
-      setError('Неверный email или пароль');
+      if (response.data.success) {
+        // Если авторизация успешна, сохраняем данные пользователя
+        const userData = {
+          id: response.data.user.id,
+          email: response.data.user.email,
+          role: response.data.user.role,
+          name: `${response.data.user.firstname} ${response.data.user.lastname}`
+        };
+        login(userData); // Сохраняем данные в контексте авторизации
+        navigate('/'); // Перенаправляем на главную страницу
+      } else {
+        setError('Неверный email или пароль');
+      }
     } catch (err) {
       setError('Ошибка при входе в систему');
       console.error('Login error:', err);
@@ -91,4 +86,4 @@ const Login = () => {
   );
 };
 
-export default Login; 
+export default Login;

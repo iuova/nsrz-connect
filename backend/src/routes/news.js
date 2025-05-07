@@ -83,6 +83,3 @@ router.patch('/:id/publish', async (req, res) => {
 // Экспорт
 export default router; // Важно: default export
 
-// ИЛИ для именованного экспорта:
-// export const newsRouter = router;
-// Тогда импорт будет: import { newsRouter } from './routes/news.js'; 

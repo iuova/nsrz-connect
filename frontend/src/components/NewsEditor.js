@@ -30,10 +30,10 @@ const NewsEditor = ({ news, onSave, onCancel }) => {
   return (
     <div className="editor-modal">
       <form onSubmit={handleSubmit} className="editor-form">
-        <h2>{news?.id ? 'Edit News' : 'Create News'}</h2>
+        <h2>{news?.id ? 'Новость (редактирование)' : 'Новость (создание)'}</h2>
         
         <label>
-          Title:
+          Заголовок:
           <input
             type="text"
             name="title"
@@ -44,7 +44,7 @@ const NewsEditor = ({ news, onSave, onCancel }) => {
         </label>
 
         <label>
-          Content:
+          Содержание:
           <textarea
             name="content"
             value={formData.content}
@@ -56,14 +56,14 @@ const NewsEditor = ({ news, onSave, onCancel }) => {
 
         <div className="form-actions">
           <button type="submit" className="btn-save">
-            Save
+            Сохранить
           </button>
           <button 
             type="button" 
             onClick={onCancel}
             className="btn-cancel"
           >
-            Cancel
+            Отмена
           </button>
         </div>
       </form>

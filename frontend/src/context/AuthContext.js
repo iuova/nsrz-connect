@@ -26,7 +26,7 @@ export const AuthProvider = ({ children }) => {
   };
 
   const isAdmin = () => {
-    return user?.role === 'admin';
+    return user?.role === 'admin'; // Проверяем, является ли пользователь администратором
   };
 
   if (loading) {
@@ -46,4 +46,4 @@ export const useAuth = () => {
     throw new Error('useAuth must be used within an AuthProvider');
   }
   return context;
-}; 
+};

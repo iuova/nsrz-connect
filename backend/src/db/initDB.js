@@ -29,6 +29,18 @@ db.serialize(() => {
     published BOOLEAN DEFAULT 0,
     createdAt DATETIME DEFAULT CURRENT_TIMESTAMP
   )`);
+
+  db.run(`CREATE TABLE IF NOT EXISTS users (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    email TEXT NOT NULL,
+    password TEXT NOT NULL,
+    lastname TEXT NOT NULL,
+    firstname TEXT NOT NULL,
+    midlename TEXT,
+    role TEXT NOT NULL,
+    status TEXT NOT NULL,
+    department TEXT NOT NULL
+  )`);
 });
 
 export default db;
