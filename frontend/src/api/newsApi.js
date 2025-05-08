@@ -27,3 +27,13 @@ export const deleteNews = async (id) => {
 export const publishNews = async (id) => {
   return axios.patch(`${API_URL}/${id}/publish`, { published: true });
 };
+
+export const getLatestNews = async () => {
+  try {
+    const response = await axios.get('/api/news?published=true&limit=5');
+    return response.data || [];
+  } catch (error) {
+    console.error('Error fetching latest news:', error);
+    return [];
+  }
+};

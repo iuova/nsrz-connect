@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import axios from 'axios';
+import { getLatestNews } from '../api/newsApi';
 import './Home.css';
 
 const Home = () => {
@@ -10,8 +10,8 @@ const Home = () => {
   useEffect(() => {
     const fetchNews = async () => {
       try {
-        const response = await axios.get('/api/news?published=true');
-        setNews(response.data);
+        const data = await getLatestNews();
+        setNews(data);
       } catch (error) {
         console.error('Ошибка загрузки новостей:', error);
       } finally {
@@ -62,22 +62,21 @@ const Home = () => {
         {loading ? (
           <p>Загрузка новостей...</p>
         ) : (
-          <div className="news-list">
+          <div className="news-grid">
             {news.map(item => (
-              <div key={item.id} className="news-item">
+              <div key={item.id} className="news-card">
                 <h3>{item.title}</h3>
-                <p>{item.content}</p>
+                <div className="news-content">
+                  <p>{item.content.length > 100 ? `${item.content.substring(0, 100)}...` : item.content}</p>
+                </div>
                 <div className="news-meta">
-                  <span className="news-date">{new Date(item.date).toLocaleDateString()}</span>
-                  <span className="news-author">{item.author}</span>
+                  <span>{new Date(item.createdAt).toLocaleDateString()}</span>
                 </div>
               </div>
             ))}
           </div>
         )}
-        <Link to="/news" className="view-all-news">
-          Все новости →
-        </Link>
+        <Link to="/news" className="view-all">Все новости →</Link>
       </section>
     </div>
   );
