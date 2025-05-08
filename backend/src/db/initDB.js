@@ -20,8 +20,9 @@ const db = new sqlite3.Database(dbPath, (err) => {
   console.log('Connected to SQLite database at', dbPath);
 });
 
-// Единая схема таблицы
+// Единая схема таблиц
 db.serialize(() => {
+  // news
   db.run(`CREATE TABLE IF NOT EXISTS news (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     title TEXT NOT NULL,
@@ -29,7 +30,7 @@ db.serialize(() => {
     published BOOLEAN DEFAULT 0,
     createdAt DATETIME DEFAULT CURRENT_TIMESTAMP
   )`);
-
+// users
   db.run(`CREATE TABLE IF NOT EXISTS users (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     email TEXT NOT NULL,
@@ -40,6 +41,15 @@ db.serialize(() => {
     role TEXT NOT NULL,
     status TEXT NOT NULL,
     department TEXT NOT NULL
+  )`);
+
+  // departments
+  db.run(`CREATE TABLE IF NOT EXISTS Departments (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    name TEXT NOT NULL,
+    fullname TEXT NOT NULL,
+    code_zup TEXT NOT NULL,
+    organization TEXT NOT NULL
   )`);
 });
 
