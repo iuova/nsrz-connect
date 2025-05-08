@@ -1,36 +1,42 @@
 import React, { useState, useEffect } from 'react';
+import axios from 'axios';
 import Navbar from '../components/Navbar';
 import './News.css';
+
+const API_BASE = process.env.REACT_APP_API_URL || 'http://localhost:5000';
 
 const News = () => {
   const [news, setNews] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [itemsPerPage] = useState(5); // Количество новостей на странице
 
   useEffect(() => {
-    // Временные данные для новостей
-    const mockNews = [
-      {
-        id: 1,
-        title: 'Обновление системы',
-        content: 'Запущена новая версия корпоративного портала НСРЗ Коннект',
-        date: '2024-03-20',
-        author: 'Администратор'
-      },
-      {
-        id: 2,
-        title: 'Корпоративное мероприятие',
-        content: 'Приглашаем всех сотрудников на ежегодное собрание',
-        date: '2024-03-18',
-        author: 'Отдел кадров'
+    const fetchNews = async () => {
+      try {
+        const response = await axios.get(`${API_BASE}/api/news`);
+        if (response.data && response.data.length > 0) {
+          setNews(response.data);
+        } else {
+          setError('Новостей пока нет.');
+        }
+      } catch (err) {
+        console.error('Error fetching news:', err);
+        setError('Не удалось загрузить новости');
+      } finally {
+        setLoading(false);
       }
-    ];
+    };
 
-    // Имитация загрузки данных
-    setTimeout(() => {
-      setNews(mockNews);
-      setLoading(false);
-    }, 1000);
+    fetchNews();
   }, []);
+
+  // Пагинация
+  const indexOfLastItem = currentPage * itemsPerPage;
+  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+  const currentNews = news.slice(indexOfFirstItem, indexOfLastItem);
+  const paginate = (pageNumber) => setCurrentPage(pageNumber);
 
   if (loading) {
     return (
@@ -38,6 +44,17 @@ const News = () => {
         <Navbar />
         <div className="main-content">
           <div className="loading">Загрузка новостей...</div>
+        </div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="app">
+        <Navbar />
+        <div className="main-content">
+          <div className="error">{error}</div>
         </div>
       </div>
     );
@@ -53,15 +70,27 @@ const News = () => {
             <p>Актуальные события и объявления</p>
           </section>
           <div className="news-list">
-            {news.map(item => (
+            {currentNews.map(item => (
               <div key={item.id} className="news-item">
                 <h2>{item.title}</h2>
                 <p className="news-content">{item.content}</p>
                 <div className="news-meta">
-                  <span className="news-date">{item.date}</span>
-                  <span className="news-author">{item.author}</span>
+                  <span className="news-date">{item.date || item.createdAt?.slice(0,10)}</span>
+                  <span className="news-author">{item.author || 'Администратор'}</span>
                 </div>
               </div>
+            ))}
+          </div>
+          {/* Пагинация */}
+          <div className="pagination">
+            {Array.from({ length: Math.ceil(news.length / itemsPerPage) }, (_, i) => (
+              <button
+                key={i + 1}
+                onClick={() => paginate(i + 1)}
+                className={currentPage === i + 1 ? 'active' : ''}
+              >
+                {i + 1}
+              </button>
             ))}
           </div>
         </div>

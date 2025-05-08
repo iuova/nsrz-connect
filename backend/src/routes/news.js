@@ -3,11 +3,18 @@ import db from '../db/initDB.js';
 
 const router = express.Router();
 
-// Получение всех новостей
+// Получение новостей
 router.get('/', async (req, res) => {
+  const showAll = req.query.all === 'true';
+  const sql = `
+    SELECT * FROM news
+    ${showAll ? '' : 'WHERE published = 1'}
+    ORDER BY createdAt DESC
+  `;
+
   try {
     const news = await new Promise((resolve, reject) => {
-      db.all("SELECT * FROM news ORDER BY createdAt DESC", [], (err, rows) => {
+      db.all(sql, [], (err, rows) => {
         if (err) reject(err);
         else resolve(rows);
       });
@@ -66,7 +73,7 @@ router.patch('/:id/publish', async (req, res) => {
     await new Promise((resolve, reject) => {
       db.run(
         "UPDATE news SET published = ? WHERE id = ?",
-        [req.body.published, req.params.id],
+        [req.body.published ? 1 : 0, req.params.id],
         (err) => {
           if (err) reject(err);
           else resolve();
