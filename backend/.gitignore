@@ -1,0 +1,40 @@
+# Зависимости
+node_modules
+
+# Файлы окружения
+.env
+
+# Логи
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+
+# Директории сборки
+dist
+dist-ssr
+build
+*.local
+
+# Загруженные файлы
+uploads/*
+!uploads/.gitkeep
+
+# Файлы базы данных SQLite
+*.sqlite
+*.db
+*.db-journal
+
+# Редактор настройки
+.vscode/*
+!.vscode/extensions.json
+.idea
+.DS_Store
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw? 

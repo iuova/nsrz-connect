@@ -1,0 +1,275 @@
+.news-admin-tab {
+  padding: 1rem;
+  background-color: #fff;
+  border-radius: 8px;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+}
+
+/* Заголовок и кнопка создания */
+.admin-panel-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+}
+
+.admin-panel-header h2 {
+  margin: 0;
+  color: #333;
+  font-size: 1.5rem;
+}
+
+.create-btn {
+  background-color: #e8f5e9;
+  color: #2e7d32;
+  border: 1px solid #c8e6c9;
+  padding: 0.6rem 1.2rem;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 0.9rem;
+  transition: background-color 0.2s;
+}
+
+.create-btn:hover {
+  background-color: #c8e6c9;
+}
+
+/* Форма поиска */
+.search-form {
+  display: flex;
+  margin-bottom: 1.5rem;
+}
+
+.search-input {
+  flex: 1;
+  padding: 0.6rem 1rem;
+  border: 1px solid #ddd;
+  border-radius: 4px 0 0 4px;
+  font-size: 0.9rem;
+}
+
+.search-btn {
+  padding: 0.6rem 1.2rem;
+  background-color: #f5f5f5;
+  border: 1px solid #ddd;
+  border-left: none;
+  border-radius: 0 4px 4px 0;
+  cursor: pointer;
+  font-size: 0.9rem;
+  color: #333;
+  transition: background-color 0.2s;
+}
+
+.search-btn:hover {
+  background-color: #e0e0e0;
+}
+
+/* Стили таблицы */
+.news-table-container {
+  overflow-x: auto;
+  margin-bottom: 1.5rem;
+}
+
+.news-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.9rem;
+}
+
+.news-table th, 
+.news-table td {
+  padding: 0.8rem;
+  text-align: left;
+  border-bottom: 1px solid #eee;
+}
+
+.news-table th {
+  background-color: #f9f9f9;
+  font-weight: 600;
+  color: #555;
+}
+
+.news-table tr:hover {
+  background-color: #f5f5f5;
+}
+
+/* Ширина колонок */
+.col-id {
+  width: 80px;
+}
+
+.col-title {
+  min-width: 250px;
+}
+
+.col-author {
+  width: 150px;
+}
+
+.col-date {
+  width: 180px;
+}
+
+.col-status {
+  width: 150px;
+}
+
+.col-actions {
+  width: 100px;
+  text-align: center;
+}
+
+/* Стили для строк таблицы */
+.news-table tr.published {
+  background-color: #f9fff9;
+}
+
+.news-table tr.unpublished {
+  background-color: #fffcf9;
+}
+
+/* Ячейка заголовка */
+.news-title-cell {
+  max-width: 300px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* Стили для статуса */
+.status-badge {
+  display: inline-block;
+  padding: 0.3rem 0.6rem;
+  border-radius: 50px;
+  font-size: 0.8rem;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.status-badge.published {
+  background-color: #e8f5e9;
+  color: #2e7d32;
+}
+
+.status-badge.published:hover {
+  background-color: #c8e6c9;
+}
+
+.status-badge.unpublished {
+  background-color: #fff8e1;
+  color: #ff8f00;
+}
+
+.status-badge.unpublished:hover {
+  background-color: #ffecb3;
+}
+
+/* Кнопки действий */
+.action-buttons {
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+}
+
+.edit-btn, .delete-btn, .confirm-yes, .confirm-no {
+  width: 28px;
+  height: 28px;
+  border-radius: 4px;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.9rem;
+  transition: background-color 0.2s;
+}
+
+.edit-btn {
+  background-color: #e8f5e9;
+  color: #2e7d32;
+}
+
+.edit-btn:hover {
+  background-color: #c8e6c9;
+}
+
+.delete-btn {
+  background-color: #ffebee;
+  color: #d32f2f;
+}
+
+.delete-btn:hover {
+  background-color: #ffcdd2;
+}
+
+/* Подтверждение удаления */
+.confirm-delete {
+  display: flex;
+  gap: 4px;
+}
+
+.confirm-yes {
+  background-color: #e8f5e9;
+  color: #2e7d32;
+}
+
+.confirm-yes:hover {
+  background-color: #c8e6c9;
+}
+
+.confirm-no {
+  background-color: #ffebee;
+  color: #d32f2f;
+}
+
+.confirm-no:hover {
+  background-color: #ffcdd2;
+}
+
+/* Сообщения */
+.error-message {
+  color: #d32f2f;
+  padding: 0.8rem;
+  margin-bottom: 1rem;
+  background-color: #ffebee;
+  border-radius: 4px;
+  border-left: 3px solid #d32f2f;
+}
+
+.loading, .no-news {
+  padding: 2rem;
+  text-align: center;
+  color: #666;
+}
+
+/* Пагинация */
+.pagination {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: 1.5rem;
+  gap: 1rem;
+}
+
+.pagination-btn {
+  padding: 0.5rem 1rem;
+  background-color: #f5f5f5;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.pagination-btn:hover:not(:disabled) {
+  background-color: #e0e0e0;
+}
+
+.pagination-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.page-info {
+  font-size: 0.9rem;
+  color: #666;
+} 

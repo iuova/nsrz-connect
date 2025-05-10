@@ -1,112 +1,86 @@
 import express from 'express';
 import cors from 'cors';
+import path from 'path';
+import { fileURLToPath } from 'url';
+import rootRouter from './routes/index.js';
 import newsRouter from './routes/news.js';
 import usersRouter from './routes/users.js';
 import departmentsRouter from './routes/departments.js';
 import db from './db/initDB.js';
 
 const app = express();
+const PORT = process.env.PORT || 5000;
 
-// Middleware для логирования запросов (оставляем только необходимое)
-app.use((req, res, next) => {
-  console.log(`[${new Date().toISOString()}] ${req.method} ${req.url}`);
-  next();
-});
+// Получение текущей директории
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
-// CORS
+// Настройка CORS для разрешения запросов с фронтенда
 app.use(cors({
-  origin: 'http://localhost:3000',
-  credentials: true
+  origin: 'http://localhost:3000', // Разрешаем запросы только с локального фронтенда
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH'], // Разрешенные методы
+  allowedHeaders: ['Content-Type', 'Authorization'], // Разрешенные заголовки
 }));
 
-// Парсинг JSON
-app.use(express.json());
+// Парсинг JSON и форм
+app.use(express.json({ limit: '10mb' }));
+app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 
-// Модификация запросов к /api/news
-app.use('/api/news', (req, res, next) => {
-  if (req.method === 'POST') {
-    // Добавляем недостающие поля для устранения проблемы с валидацией
-    if (req.body && (!req.body.createdAt || !req.body.createdBy)) {
-      req.body.createdAt = req.body.createdAt || new Date().toISOString();
-      req.body.createdBy = req.body.createdBy || null;
-    }
+// Настройка статических файлов для изображений
+app.use('/uploads', express.static(path.join(process.cwd(), 'uploads')));
+
+// Определение маршрутов API
+app.use('/', rootRouter);
+app.use('/news', newsRouter);
+app.use('/users', usersRouter);
+app.use('/departments', departmentsRouter);
+
+// Endpoint для проверки работоспособности сервера
+app.get('/health', (req, res) => {
+  res.json({ status: 'ok', timestamp: new Date().toISOString() });
+});
+
+// Endpoint для проверки подключения к БД
+app.get('/db-health', async (req, res) => {
+  try {
+    const result = await checkDatabase();
+    res.json({ status: 'ok', dbStatus: result });
+  } catch (err) {
+    console.error('Database health check error:', err);
+    res.status(500).json({ status: 'error', message: err.message });
   }
-  
-  // Перехват ошибок валидации
-  const originalJson = res.json;
-  res.json = function(body) {
-    // Если это ответ с ошибкой о недостающих полях
-    if (body && body.error && typeof body.error === 'string' && 
-        body.error.includes('Title, content, createdAt, createdBy are required')) {
-      // Изменяем код статуса и тело ответа
-      res.status(200);
-      
-      // Заменяем ответ успешным созданием новости
-      return originalJson.call(this, {
-        id: Math.floor(Math.random() * 10000),
-        title: req.body.title,
-        content: req.body.content,
-        published: 0,
-        createdAt: new Date().toISOString()
-      });
-    }
-    
-    // Для всех остальных ответов используем оригинальный метод
-    return originalJson.call(this, body);
-  };
-  
-  next();
 });
 
-// Routes
-app.use('/api/news', newsRouter);
-app.use('/api/users', usersRouter);
-app.use('/api/departments', departmentsRouter);
-
-// Health check endpoint
-app.get('/api/health', (req, res) => {
-  res.json({ status: 'ok', timestamp: new Date() });
-});
-
-// Start server
-const PORT = process.env.PORT || 5000;
-app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);
-});
-
-// Проверка существования основных таблиц
+// Функция для проверки наличия таблицы
 const checkTable = (tableName) => {
   return new Promise((resolve, reject) => {
-    db.get(
-      "SELECT name FROM sqlite_master WHERE type='table' AND name=?",
-      [tableName],
-      (err, row) => {
-        if (err) return reject(err);
-        resolve(!!row);
-      }
-    );
+    db.get(`SELECT name FROM sqlite_master WHERE type='table' AND name=?`, [tableName], (err, row) => {
+      if (err) reject(err);
+      resolve(!!row);
+    });
   });
 };
 
-// Асинхронная проверка всех таблиц
+// Функция для проверки наличия всех необходимых таблиц
 const checkDatabase = async () => {
   try {
-    const tables = ['news', 'users', 'Departments'];
-    const results = await Promise.all(tables.map(checkTable));
+    const tables = ['news', 'users', 'departments'];
+    const results = await Promise.all(tables.map(table => checkTable(table)));
     
-    results.forEach((exists, index) => {
-      if (!exists) {
-        console.error(`Table ${tables[index]} not found!`);
-        process.exit(1);
-      }
-    });
-    
-    console.log('All required tables exist');
+    return {
+      news: results[0],
+      users: results[1],
+      departments: results[2]
+    };
   } catch (err) {
-    console.error('Database check failed:', err);
-    process.exit(1);
+    console.error('Error checking database tables:', err);
+    throw err;
   }
 };
 
-// Выполняем проверку
-checkDatabase();
+// Запуск сервера
+app.listen(PORT, () => {
+  console.log(`Server is running on port ${PORT}`);
+});
+
+export default app;

@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import Navbar from '../components/Navbar';
 import './News.css';
+import { formatDate, getRelativeTime } from '../utils/dateUtils';
 
 const API_BASE = process.env.REACT_APP_API_URL || 'http://localhost:5000';
 
@@ -10,14 +11,22 @@ const News = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
-  const [itemsPerPage] = useState(5); // Количество новостей на странице
+  const [totalPages, setTotalPages] = useState(1);
+  const [limit] = useState(5); // Количество новостей на странице
 
   useEffect(() => {
     const fetchNews = async () => {
       try {
-        const response = await axios.get(`${API_BASE}/api/news`);
-        if (response.data && response.data.length > 0) {
-          setNews(response.data);
+        const response = await axios.get(`${API_BASE}/api/news`, {
+          params: {
+            page: currentPage,
+            limit
+          }
+        });
+        
+        if (response.data && response.data.news && response.data.news.length > 0) {
+          setNews(response.data.news);
+          setTotalPages(Math.ceil(response.data.total / limit));
         } else {
           setError('Новостей пока нет.');
         }
@@ -30,13 +39,34 @@ const News = () => {
     };
 
     fetchNews();
-  }, []);
+  }, [currentPage, limit]);
 
-  // Пагинация
-  const indexOfLastItem = currentPage * itemsPerPage;
-  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
-  const currentNews = news.slice(indexOfFirstItem, indexOfLastItem);
-  const paginate = (pageNumber) => setCurrentPage(pageNumber);
+  // Обработчики пагинации
+  const goToPreviousPage = () => {
+    if (currentPage > 1) {
+      setCurrentPage(prev => prev - 1);
+    }
+  };
+
+  const goToNextPage = () => {
+    if (currentPage < totalPages) {
+      setCurrentPage(prev => prev + 1);
+    }
+  };
+
+  // Получение имени автора (если есть)
+  const getAuthorName = (authorId, email) => {
+    if (!authorId) return 'Администратор';
+    return email || `Пользователь ID: ${authorId}`;
+  };
+
+  // Обработка даты публикации
+  const getPublicationDate = (publishDate, createdAt) => {
+    const date = publishDate || createdAt;
+    if (!date) return 'Без даты';
+    
+    return getRelativeTime(new Date(date));
+  };
 
   if (loading) {
     return (
@@ -70,29 +100,58 @@ const News = () => {
             <p>Актуальные события и объявления</p>
           </section>
           <div className="news-list">
-            {currentNews.map(item => (
+            {news.map(item => (
               <div key={item.id} className="news-item">
                 <h2>{item.title}</h2>
-                <p className="news-content">{item.content}</p>
+                
+                {item.image && (
+                  <div className="news-image">
+                    <img 
+                      src={`${API_BASE}/uploads/${item.image}`} 
+                      alt={item.title} 
+                    />
+                  </div>
+                )}
+                
+                <div 
+                  className="news-content"
+                  dangerouslySetInnerHTML={{ __html: item.content }}
+                ></div>
+                
                 <div className="news-meta">
-                  <span className="news-date">{item.date || item.createdAt?.slice(0,10)}</span>
-                  <span className="news-author">{item.author || 'Администратор'}</span>
+                  <span className="news-date">
+                    {getPublicationDate(item.publish_date, item.created_at)}
+                  </span>
+                  <span className="news-author">
+                    {getAuthorName(item.author_id, item.author_email)}
+                  </span>
                 </div>
               </div>
             ))}
           </div>
+          
           {/* Пагинация */}
-          <div className="pagination">
-            {Array.from({ length: Math.ceil(news.length / itemsPerPage) }, (_, i) => (
-              <button
-                key={i + 1}
-                onClick={() => paginate(i + 1)}
-                className={currentPage === i + 1 ? 'active' : ''}
+          {totalPages > 1 && (
+            <div className="pagination">
+              <button 
+                onClick={goToPreviousPage} 
+                disabled={currentPage === 1}
+                className="pagination-btn"
               >
-                {i + 1}
+                &lt; Назад
               </button>
-            ))}
-          </div>
+              <span className="page-info">
+                Страница {currentPage} из {totalPages}
+              </span>
+              <button 
+                onClick={goToNextPage} 
+                disabled={currentPage === totalPages}
+                className="pagination-btn"
+              >
+                Вперед &gt;
+              </button>
+            </div>
+          )}
         </div>
       </div>
     </div>
