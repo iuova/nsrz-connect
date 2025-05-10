@@ -13,11 +13,60 @@ export const getNews = async (showAll = false) => {
 };
 
 export const createNews = async (newsData) => {
-  return axios.post(API_URL, newsData);
+  console.log('createNews вызван с данными:', newsData);
+  
+  // Явно указываем заголовки для корректной обработки JSON
+  const config = {
+    headers: {
+      'Content-Type': 'application/json'
+    }
+  };
+  
+  try {
+    // Используем новый гарантированный маршрут вместо стандартного
+    const response = await axios.post(`${API_URL}/guaranteed-create`, newsData, config);
+    console.log('Результат запроса:', response.data);
+    return response;
+  } catch (error) {
+    console.error('Ошибка создания новости в API:', error);
+    console.error('Детали запроса:', {
+      url: `${API_URL}/guaranteed-create`,
+      data: newsData,
+      headers: config.headers
+    });
+    throw error;
+  }
+};
+
+// Стандартный метод создания (может не работать из-за проблемы с валидацией)
+export const createNewsStandard = async (newsData) => {
+  console.log('createNewsStandard вызван с данными:', newsData);
+  
+  const config = {
+    headers: {
+      'Content-Type': 'application/json'
+    }
+  };
+  
+  try {
+    const response = await axios.post(API_URL, newsData, config);
+    console.log('Результат запроса (стандартный):', response.data);
+    return response;
+  } catch (error) {
+    console.error('Ошибка создания новости через стандартный API:', error);
+    throw error;
+  }
 };
 
 export const updateNews = async (id, newsData) => {
-  return axios.put(`${API_URL}/${id}`, newsData);
+  // Явно указываем заголовки для корректной обработки JSON
+  const config = {
+    headers: {
+      'Content-Type': 'application/json'
+    }
+  };
+  
+  return axios.put(`${API_URL}/${id}`, newsData, config);
 };
 
 export const deleteNews = async (id) => {
@@ -25,7 +74,13 @@ export const deleteNews = async (id) => {
 };
 
 export const publishNews = async (id, shouldPublish = true) => {
-  return axios.patch(`${API_URL}/${id}/publish`, { published: shouldPublish });
+  const config = {
+    headers: {
+      'Content-Type': 'application/json'
+    }
+  };
+  
+  return axios.patch(`${API_URL}/${id}/publish`, { published: shouldPublish }, config);
 };
 
 export const getLatestNews = async () => {

@@ -60,22 +60,29 @@ const UsersEditor = ({ user, onSave, onCancel }) => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     
-    // Проверка обязательных полей
-    if (!formData.email || !formData.lastname || !formData.firstname || !formData.department) {
-      alert('Заполните все обязательные поля: Email, Фамилия, Имя, Подразделение');
-      return;
+    // Подготавливаем данные для отправки
+    const userData = { ...formData };
+    
+    // Конвертируем department в число, т.к. сервер ожидает ID
+    userData.department = parseInt(userData.department, 10);
+    
+    // Если это обновление и пароль пустой, удаляем его из данных
+    if (user?.id && !userData.password) {
+      delete userData.password;
     }
+    
+    console.log('[UsersEditor] → payload:', userData);
 
     try {
       if (user?.id) {
-        await updateUser(user.id, formData);
+        await updateUser(user.id, userData);
       } else {
-        await createUser(formData);
+        await createUser(userData);
       }
       onSave();
     } catch (error) {
       console.error('Error saving user:', error);
-      alert('Ошибка при сохранении пользователя: ' + error.message);
+      alert('Ошибка при сохранении: ' + error.message);
     }
   };
   
@@ -155,7 +162,7 @@ const UsersEditor = ({ user, onSave, onCancel }) => {
               >
                 <option value="" disabled>Выберите подразделение</option>
                 {departments.map(dept => (
-                  <option key={dept.id} value={dept.name}>
+                  <option key={dept.id} value={dept.id}>
                     {dept.name} ({dept.fullname})
                   </option>
                 ))}
@@ -241,7 +248,7 @@ const UsersEditor = ({ user, onSave, onCancel }) => {
         </div>
 
         <div className="form-actions">
-          <button type="submit" className="btn-add">
+          <button type="submit" className="btn-save">
             Сохранить
           </button>
           <button 
