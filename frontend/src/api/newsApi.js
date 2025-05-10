@@ -2,9 +2,9 @@ import axios from 'axios';
 
 const API_URL = 'http://localhost:5000/api/news';
 
-export const getNews = async () => {
+export const getNews = async (showAll = false) => {
   try {
-    const response = await axios.get(API_URL);
+    const response = await axios.get(`${API_URL}${showAll ? '?all=true' : ''}`);
     return response.data || [];
   } catch (error) {
     console.error('Error fetching news:', error);
@@ -24,8 +24,8 @@ export const deleteNews = async (id) => {
   return axios.delete(`${API_URL}/${id}`);
 };
 
-export const publishNews = async (id) => {
-  return axios.patch(`${API_URL}/${id}/publish`, { published: true });
+export const publishNews = async (id, shouldPublish = true) => {
+  return axios.patch(`${API_URL}/${id}/publish`, { published: shouldPublish });
 };
 
 export const getLatestNews = async () => {

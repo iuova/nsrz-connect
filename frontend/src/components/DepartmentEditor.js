@@ -23,17 +23,22 @@ const DepartmentEditor = ({ department, onSave, onCancel }) => {
       } else {
         await createDepartment(formData);
       }
-      setFormData({ name: '', fullname: '', code_zup: '', organization: '' });
       onSave();
     } catch (error) {
       console.error('Error saving department:', error);
-      alert('Не удалось сохранить подразделение. Проверьте данные.');
     }
   };
 
   return (
     <div className="editor-modal">
       <form onSubmit={handleSubmit} className="editor-form">
+        <button 
+          type="button" 
+          className="close-button" 
+          onClick={onCancel} 
+          aria-label="Закрыть"
+        ></button>
+        
         <h2>{department?.id ? 'Подразделение (редактирование)' : 'Подразделение (создание)'}</h2>
         
         <label>

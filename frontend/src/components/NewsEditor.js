@@ -30,6 +30,13 @@ const NewsEditor = ({ news, onSave, onCancel }) => {
   return (
     <div className="editor-modal">
       <form onSubmit={handleSubmit} className="editor-form">
+        <button 
+          type="button" 
+          className="close-button" 
+          onClick={onCancel} 
+          aria-label="Закрыть"
+        ></button>
+        
         <h2>{news?.id ? 'Новость (редактирование)' : 'Новость (создание)'}</h2>
         
         <label>

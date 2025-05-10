@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import { useAuth } from '../context/AuthContext';
-import NewsManagement from '../components/NewsManagement';
-import UsersManagement from '../components/UsersManagement';
-import DepartmentManagement from '../components/DepartmentManagement';
+import NewsTab from '../components/admin/NewsTab';
+import UsersTab from '../components/admin/UsersTab';
+import DepartmentsTab from '../components/admin/DepartmentsTab';
 import './AdminPanel.css';
 
 const AdminPanel = () => {
@@ -36,9 +36,9 @@ const AdminPanel = () => {
         </button>
       </div>
 
-      {activeTab === 'news' && <NewsManagement isAdmin={isAdmin()} />}
-      {activeTab === 'users' && <UsersManagement isAdmin={isAdmin()} />}
-      {activeTab === 'departments' && <DepartmentManagement isAdmin={isAdmin()} />}
+      {activeTab === 'news' && <NewsTab />}
+      {activeTab === 'users' && <UsersTab />}
+      {activeTab === 'departments' && <DepartmentsTab />}
     </div>
   );
 };
