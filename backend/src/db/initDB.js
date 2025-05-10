@@ -28,7 +28,9 @@ db.serialize(() => {
     title TEXT NOT NULL,
     content TEXT NOT NULL,
     published BOOLEAN DEFAULT 0,
-    createdAt DATETIME DEFAULT CURRENT_TIMESTAMP
+    createdAt DATETIME DEFAULT CURRENT_TIMESTAMP,
+    createdBy INTEGER,
+    FOREIGN KEY (createdBy) REFERENCES users(id)
   )`);
 // users
   db.run(`CREATE TABLE IF NOT EXISTS users (
@@ -40,7 +42,8 @@ db.serialize(() => {
     midlename TEXT,
     role TEXT NOT NULL,
     status TEXT NOT NULL,
-    department TEXT NOT NULL
+    department INTEGER,
+    FOREIGN KEY (department) REFERENCES Departments(id)
   )`);
 
   // departments

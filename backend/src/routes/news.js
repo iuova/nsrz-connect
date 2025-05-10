@@ -28,16 +28,16 @@ router.get('/', async (req, res) => {
 
 // Создание новости
 router.post('/', async (req, res) => {
-  const { title, content } = req.body;
-  if (!title || !content) {
-    return res.status(400).json({ error: 'Title and content are required' });
+  const { title, content, createdAt, createdBy } = req.body;
+  if (!title || !content || !createdAt || !createdBy) {
+    return res.status(400).json({ error: 'Title, content, createdAt, createdBy are required' });
   }
 
   try {
     const result = await new Promise((resolve, reject) => {
       db.run(
-        "INSERT INTO news (title, content) VALUES (?, ?)",
-        [title, content],
+        "INSERT INTO news (title, content, createdAt, createdBy) VALUES (?, ?, ?, ?)",
+        [title, content, createdAt, createdBy],
         function(err) {
           if (err) reject(err);
           else resolve({ id: this.lastID });
@@ -51,7 +51,7 @@ router.post('/', async (req, res) => {
   }
 });
 
-// Другие CRUD-операции (пример для удаления)
+// Удаление новости
 router.delete('/:id', async (req, res) => {
   try {
     await new Promise((resolve, reject) => {
@@ -67,7 +67,7 @@ router.delete('/:id', async (req, res) => {
   }
 });
 
-// Добавьте этот новый роут
+// Публикация новости
 router.patch('/:id/publish', async (req, res) => {
   try {
     await new Promise((resolve, reject) => {
@@ -88,5 +88,5 @@ router.patch('/:id/publish', async (req, res) => {
 });
 
 // Экспорт
-export default router; // Важно: default export
+export default router;
 

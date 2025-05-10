@@ -59,6 +59,13 @@ const UsersEditor = ({ user, onSave, onCancel }) => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    
+    // Проверка обязательных полей
+    if (!formData.email || !formData.lastname || !formData.firstname || !formData.department) {
+      alert('Заполните все обязательные поля: Email, Фамилия, Имя, Подразделение');
+      return;
+    }
+
     try {
       if (user?.id) {
         await updateUser(user.id, formData);
@@ -68,6 +75,7 @@ const UsersEditor = ({ user, onSave, onCancel }) => {
       onSave();
     } catch (error) {
       console.error('Error saving user:', error);
+      alert('Ошибка при сохранении пользователя: ' + error.message);
     }
   };
   

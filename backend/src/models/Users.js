@@ -3,6 +3,11 @@ import bcrypt from 'bcryptjs'; // Используем bcryptjs
 
 class User {
   static create({ email, password, lastname, firstname, midlename, role, status, department }, callback) {
+    // Проверяем, что department - это число (id подразделения)
+    if (typeof department !== 'number') {
+      return callback(new Error('Department must be an ID (integer)'));
+    }
+
     // Хэшируем пароль перед сохранением
     bcrypt.hash(password, 10, (err, hash) => {
       if (err) return callback(err);
