@@ -1,5 +1,5 @@
 ---
-description: 
+description: core-rules
 globs: 
 alwaysApply: true
 ---
@@ -21,4 +21,9 @@ alwaysApply: true
 - Write thorough tests for all major functionality
 - Avoid making major changes to the patterns and architecture of how a feature works, after it has shown to work well, unless explicitly instructed
 - Always think about what other methods and areas of code might be affected by code changes
-- dev-journal.md use it as journal to track of the project, milestones and conversations. Be thorough and always append to it and not delete anything, at the beginning of the tracked message indicate current date and time.
+- dev-journal.md use it as journal to track of the project, milestones and conversations. Be thorough and always append to it and not delete anything. Journal entry format: 
+## [Current date and time]
+Log message content.
+Example:
+## [2025-05-11 14:30:45]
+User authentication successful.
