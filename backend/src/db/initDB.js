@@ -52,6 +52,29 @@ db.serialize(() => {
     code_zup TEXT NOT NULL,
     organization TEXT NOT NULL
   )`);
+
+  // positions
+  db.run(`CREATE TABLE IF NOT EXISTS positions (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    name TEXT NOT NULL,
+    department_id INTEGER NOT NULL,
+    FOREIGN KEY (department_id) REFERENCES Departments(id)
+  )`);
+
+  // employees
+  db.run(`CREATE TABLE IF NOT EXISTS employees (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    lastname TEXT NOT NULL,
+    firstname TEXT NOT NULL,
+    middlename TEXT,
+    department_id INTEGER NOT NULL,
+    position_id INTEGER NOT NULL,
+    birth_date DATE NOT NULL,
+    hire_date DATE NOT NULL,
+    dismissal_date DATE,
+    FOREIGN KEY (department_id) REFERENCES Departments(id),
+    FOREIGN KEY (position_id) REFERENCES positions(id)
+  )`);
 });
 
 export default db;
