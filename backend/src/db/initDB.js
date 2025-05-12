@@ -40,7 +40,8 @@ db.serialize(() => {
     midlename TEXT,
     role TEXT NOT NULL,
     status TEXT NOT NULL,
-    department TEXT NOT NULL
+    department_id INTEGER NOT NULL,
+    FOREIGN KEY (department_id) REFERENCES Departments(id)
   )`);
 
   // departments

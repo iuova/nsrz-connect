@@ -1,6 +1,7 @@
 import express from 'express';
 import User from '../models/Users.js';
 import bcrypt from 'bcryptjs';
+import db from '../db/initDB.js';
 
 const router = express.Router();
 
@@ -51,33 +52,36 @@ router.post('/login', async (req, res) => {
   }
 });
 
-// Создание нового пользователя
-router.post('/', (req, res) => {
-  console.log('Полученные данные:', req.body);
-  const { email, password, lastname, firstname, midlename, role, status, department } = req.body;
-  if (!email || !password || !lastname || !firstname || !role || !status || !department) {
-    console.error('Не хватает обязательных полей:', req.body);
-    return res.status(400).json({ error: 'Отсутствуют обязательные поля' });
+// Создание пользователя (теперь требует department_id)
+router.post('/', async (req, res) => {
+  try {
+    const id = await User.create(req.body);
+    res.json({ id });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Database error' });
   }
-
-  User.create({ email, password, lastname, firstname, midlename, role, status, department }, (err, id) => {
-    if (err) {
-      console.error('Ошибка при создании пользователя:', err);
-      return res.status(500).json({ error: err.message });
-    }
-    console.log('Пользователь успешно создан с ID:', id);
-    res.status(201).json({ id });
-  });
 });
 
-// Получение всех пользователей
-router.get('/', (req, res) => {
-  User.findAll((err, users) => {
-    if (err) {
-      return res.status(500).json({ error: err.message });
-    }
+// Получение пользователей с JOIN к Departments
+router.get('/', async (req, res) => {
+  try {
+    const users = await new Promise((resolve, reject) => {
+      const sql = `
+        SELECT u.*, d.name as department_name 
+        FROM users u
+        LEFT JOIN Departments d ON u.department_id = d.id
+      `;
+      db.all(sql, [], (err, rows) => {
+        if (err) reject(err);
+        else resolve(rows);
+      });
+    });
     res.json(users);
-  });
+  } catch (err) {
+    console.error('Ошибка получения пользователей:', err);
+    res.status(500).json({ error: 'Ошибка сервера' });
+  }
 });
 
 // Получение пользователя по ID

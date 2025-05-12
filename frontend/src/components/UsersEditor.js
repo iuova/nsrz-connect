@@ -12,20 +12,23 @@ const UsersEditor = ({ user, onSave, onCancel }) => {
     midlename: user?.midlename || '',
     role: user?.id ? user?.role || 'user' : '',
     status: user?.id ? user?.status || 'active' : '',
-    department: user?.department || ''
+    department_id: user?.department_id || ''
   });
   
   const [departments, setDepartments] = useState([]);
   const [loading, setLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
+  const [error, setError] = useState('');
   
-  // Получаем список отделов при загрузке компонента
   useEffect(() => {
     const fetchDepartments = async () => {
       setLoading(true);
       try {
         const data = await getDepartments();
         setDepartments(data);
+        if (!user?.id && data.length > 0) {
+          setFormData(prev => ({ ...prev, department_id: data[0].id }));
+        }
       } catch (error) {
         console.error('Error fetching departments:', error);
       } finally {
@@ -36,7 +39,6 @@ const UsersEditor = ({ user, onSave, onCancel }) => {
     fetchDepartments();
   }, []);
 
-  // Если у нас есть ID пользователя, загружаем его данные в форму
   useEffect(() => {
     if (user?.id) {
       setFormData({
@@ -47,7 +49,7 @@ const UsersEditor = ({ user, onSave, onCancel }) => {
         midlename: user.midlename || '',
         role: user.role || 'user',
         status: user.status || 'active',
-        department: user.department || ''
+        department_id: user.department_id || ''
       });
     }
   }, [user]);
@@ -59,6 +61,18 @@ const UsersEditor = ({ user, onSave, onCancel }) => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setError('');
+    
+    if (!formData.email || !formData.firstname || !formData.lastname || !formData.department_id || !formData.role || !formData.status) {
+      setError('Пожалуйста, заполните все обязательные поля');
+      return;
+    }
+    
+    if (!user?.id && !formData.password) {
+      setError('Пароль обязателен для нового пользователя');
+      return;
+    }
+    
     try {
       if (user?.id) {
         await updateUser(user.id, formData);
@@ -68,6 +82,7 @@ const UsersEditor = ({ user, onSave, onCancel }) => {
       onSave();
     } catch (error) {
       console.error('Error saving user:', error);
+      setError(error.response?.data?.error || error.message || 'Ошибка сохранения');
     }
   };
   
@@ -75,14 +90,12 @@ const UsersEditor = ({ user, onSave, onCancel }) => {
     setShowPassword(!showPassword);
   };
   
-  // Доступные роли
   const roles = [
     { value: 'admin', label: 'Администратор' },
     { value: 'user', label: 'Пользователь' },
     { value: 'hr', label: 'Кадровый сотрудник' }
   ];
   
-  // Доступные статусы
   const statuses = [
     { value: 'active', label: 'Активный' },
     { value: 'blocked', label: 'Заблокирован' }
@@ -99,6 +112,8 @@ const UsersEditor = ({ user, onSave, onCancel }) => {
         ></button>
         
         <h2>{user?.id ? 'Пользователь (редактирование)' : 'Пользователь (создание)'}</h2>
+        
+        {error && <div className="error-message">{error}</div>}
         
         <div className="name-row">
           <label>
@@ -139,16 +154,16 @@ const UsersEditor = ({ user, onSave, onCancel }) => {
             <label>
               Подразделение:
               <select
-                name="department"
-                value={formData.department}
+                name="department_id"
+                value={formData.department_id}
                 onChange={handleChange}
                 required
+                disabled={loading}
                 className="select-placeholder"
               >
-                <option value="" disabled>Выберите подразделение</option>
                 {departments.map(dept => (
-                  <option key={dept.id} value={dept.name}>
-                    {dept.name} ({dept.fullname})
+                  <option key={dept.id} value={dept.id}>
+                    {dept.name}
                   </option>
                 ))}
               </select>
@@ -191,7 +206,7 @@ const UsersEditor = ({ user, onSave, onCancel }) => {
             </label>
           </div>
 
-          <div className="form-group form-group-role">
+          <div className="form-group form-group-role" data-testid="role-group">
             <label>
               Роль:
               <select
@@ -211,7 +226,7 @@ const UsersEditor = ({ user, onSave, onCancel }) => {
             </label>
           </div>
 
-          <div className="form-group form-group-status">
+          <div className="form-group form-group-status" data-testid="status-group">
             <label>
               Статус:
               <select

@@ -13,6 +13,26 @@ export const getDepartments = async () => {
   }
 };
 
+export const getDepartmentById = async (id) => {
+  try {
+    const response = await axios.get(`${API_URL}/${id}`);
+    return response.data || null;
+  } catch (error) {
+    console.error('Error fetching department:', error);
+    return null;
+  }
+};
+
+export const checkDepartmentUsage = async (id) => {
+  try {
+    const response = await axios.get(`${API_URL}/${id}/usage`);
+    return response.data?.inUse || false;
+  } catch (error) {
+    console.error('Error checking department usage:', error);
+    return true;
+  }
+};
+
 export const createDepartment = async (departmentData) => {
   try {
     const response = await axios.post(API_URL, departmentData);
@@ -39,15 +59,5 @@ export const deleteDepartment = async (id) => {
   } catch (error) {
     console.error('Error deleting department:', error);
     throw error;
-  }
-};
-
-export const getDepartmentById = async (id) => {
-  try {
-    const response = await axios.get(`${API_URL}/${id}`);
-    return response.data || null;
-  } catch (error) {
-    console.error('Error fetching department:', error);
-    return null;
   }
 };

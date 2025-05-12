@@ -75,6 +75,21 @@ router.put('/:id', async (req, res) => {
 // Удаление отдела
 router.delete('/:id', async (req, res) => {
   try {
+    // Проверяем, есть ли пользователи с этим department_id
+    const usersWithDepartment = await new Promise((resolve, reject) => {
+      const sql = `SELECT COUNT(*) as count FROM users WHERE department_id = ?`;
+      db.get(sql, [req.params.id], (err, row) => {
+        if (err) reject(err);
+        else resolve(row.count > 0);
+      });
+    });
+
+    if (usersWithDepartment) {
+      return res.status(400).json({ 
+        error: 'Нельзя удалить отдел: есть привязанные пользователи' 
+      });
+    }
+
     const deleted = await Department.delete(req.params.id);
     if (!deleted) {
       return res.status(404).json({ error: 'Отдел не найден' });
@@ -82,7 +97,7 @@ router.delete('/:id', async (req, res) => {
     res.status(204).end();
   } catch (err) {
     console.error('Ошибка удаления отдела:', err);
-    res.status(500).json({ error: 'Ошибка сервера при удалении отдела' });
+    res.status(500).json({ error: 'Ошибка сервера' });
   }
 });
 

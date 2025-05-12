@@ -13,15 +13,43 @@ export const getUsers = async () => {
 };
 
 export const createUser = async (userData) => {
-  return axios.post(API_URL, userData);
+  try {
+    // Преобразуем department в department_id, если нужно
+    const dataToSend = {
+      ...userData,
+      department_id: userData.department_id || userData.department?.id
+    };
+    
+    const response = await axios.post(API_URL, dataToSend);
+    return response.data;
+  } catch (error) {
+    console.error('Error creating user:', error.response?.data || error.message);
+    throw error;
+  }
 };
 
 export const updateUser = async (id, userData) => {
-  return axios.put(`${API_URL}/${id}`, userData);
+  try {
+    const dataToSend = {
+      ...userData,
+      department_id: userData.department_id || userData.department?.id
+    };
+    
+    const response = await axios.put(`${API_URL}/${id}`, dataToSend);
+    return response.data;
+  } catch (error) {
+    console.error('Error updating user:', error.response?.data || error.message);
+    throw error;
+  }
 };
 
 export const deleteUser = async (id) => {
-  return axios.delete(`${API_URL}/${id}`);
+  try {
+    await axios.delete(`${API_URL}/${id}`);
+  } catch (error) {
+    console.error('Error deleting user:', error);
+    throw error;
+  }
 };
 
 export const getUserById = async (id) => {
@@ -29,7 +57,7 @@ export const getUserById = async (id) => {
     const response = await axios.get(`${API_URL}/${id}`);
     return response.data || null;
   } catch (error) {
-    console.error('Error fetching user by ID:', error);
+    console.error('Error fetching user:', error);
     return null;
   }
 };
