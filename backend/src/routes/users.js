@@ -53,11 +53,19 @@ router.post('/login', async (req, res) => {
 
 // Создание нового пользователя
 router.post('/', (req, res) => {
-  const { lastname, firstname, midlename, role, status, department } = req.body;
-  User.create({ lastname, firstname, midlename, role, status, department }, (err, id) => {
+  console.log('Полученные данные:', req.body);
+  const { email, password, lastname, firstname, midlename, role, status, department } = req.body;
+  if (!email || !password || !lastname || !firstname || !role || !status || !department) {
+    console.error('Не хватает обязательных полей:', req.body);
+    return res.status(400).json({ error: 'Отсутствуют обязательные поля' });
+  }
+
+  User.create({ email, password, lastname, firstname, midlename, role, status, department }, (err, id) => {
     if (err) {
+      console.error('Ошибка при создании пользователя:', err);
       return res.status(500).json({ error: err.message });
     }
+    console.log('Пользователь успешно создан с ID:', id);
     res.status(201).json({ id });
   });
 });
@@ -89,11 +97,15 @@ router.get('/:id', (req, res) => {
 // Обновление пользователя
 router.put('/:id', (req, res) => {
   const { id } = req.params;
-  const { lastname, firstname, midlename, role, status, department } = req.body;
-  User.update(id, { lastname, firstname, midlename, role, status, department }, (err) => {
+  console.log(`Получен запрос на обновление пользователя ${id}:`, req.body);
+  const { email, password, lastname, firstname, midlename, role, status, department } = req.body;
+  
+  User.update(id, { email, password, lastname, firstname, midlename, role, status, department }, (err) => {
     if (err) {
+      console.error('Ошибка при обновлении пользователя:', err);
       return res.status(500).json({ error: err.message });
     }
+    console.log(`Пользователь ${id} успешно обновлен`);
     res.json({ message: 'User updated successfully' });
   });
 });
