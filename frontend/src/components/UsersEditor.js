@@ -37,7 +37,7 @@ const UsersEditor = ({ user, onSave, onCancel }) => {
     };
     
     fetchDepartments();
-  }, []);
+  }, [user?.id]);
 
   useEffect(() => {
     if (user?.id) {
@@ -161,6 +161,7 @@ const UsersEditor = ({ user, onSave, onCancel }) => {
                 disabled={loading}
                 className="select-placeholder"
               >
+               <option value="" disabled>Выберите подразделение</option>
                 {departments.map(dept => (
                   <option key={dept.id} value={dept.id}>
                     {dept.name}
@@ -199,6 +200,7 @@ const UsersEditor = ({ user, onSave, onCancel }) => {
                   type="button" 
                   className="password-toggle" 
                   onClick={togglePasswordVisibility}
+                 aria-label={showPassword ? "Скрыть пароль" : "Показать пароль"}
                 >
                   <i className={`password-icon ${showPassword ? 'visible' : 'hidden'}`}></i>
                 </button>

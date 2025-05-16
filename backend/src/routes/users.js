@@ -11,18 +11,9 @@ router.post('/login', async (req, res) => {
 
   try {
     // Ищем пользователя по email
-    const user = await new Promise((resolve, reject) => {
-      User.findByEmail(email, (err, user) => {
-        if (err) {
-          console.error('Ошибка при поиске пользователя:', err);
-          reject(err);
-        } else {
-          console.log('Найден пользователь:', user);
-          resolve(user);
-        }
-      });
-    });
 
+ // Better approach: Modify the User model to return Promises
+ const user = await User.findByEmailAsync(email);
     if (!user) {
       console.log('Пользователь не найден');
       return res.status(401).json({ success: false, message: 'Неверный email или пароль' });
@@ -67,62 +58,65 @@ router.post('/', async (req, res) => {
 router.get('/', async (req, res) => {
   try {
     const users = await new Promise((resolve, reject) => {
-      const sql = `
-        SELECT u.*, d.name as department_name 
-        FROM users u
-        LEFT JOIN Departments d ON u.department_id = d.id
-      `;
-      db.all(sql, [], (err, rows) => {
-        if (err) reject(err);
-        else resolve(rows);
-      });
-    });
-    res.json(users);
-  } catch (err) {
-    console.error('Ошибка получения пользователей:', err);
-    res.status(500).json({ error: 'Ошибка сервера' });
-  }
+
+    const sql = `
+      SELECT u.id, u.email, u.firstname, u.lastname, u.role, u.status, u.department_id, d.name as department_name 
+      FROM users u
+      LEFT JOIN Departments d ON u.department_id = d.id
+    `;
+    
+    db.all(sql, [], (err, rows) => {
+            if (err) {
+             reject(err);
+            }
+            else resolve(rows);
+          });
+        });
+        res.json(users);
+      } catch (err) {
+        console.error('Ошибка получения пользователей:', err);
+        res.status(500).json({ error: 'Ошибка сервера' });
+      }
 });
 
 // Получение пользователя по ID
-router.get('/:id', (req, res) => {
-  const { id } = req.params;
-  User.findById(id, (err, user) => {
-    if (err) {
-      return res.status(500).json({ error: err.message });
-    }
+router.get('/:id', async (req, res) => {
+  try {
+    const { id } = req.params;
+    const user = await User.findByIdAsync(id);
     if (!user) {
       return res.status(404).json({ error: 'User not found' });
     }
     res.json(user);
-  });
+  } catch (err) {
+    return res.status(500).json({ error: err.message });
+  }
 });
 
 // Обновление пользователя
-router.put('/:id', (req, res) => {
-  const { id } = req.params;
-  console.log(`Получен запрос на обновление пользователя ${id}:`, req.body);
-  const { email, password, lastname, firstname, midlename, role, status, department } = req.body;
-  
-  User.update(id, { email, password, lastname, firstname, midlename, role, status, department }, (err) => {
-    if (err) {
-      console.error('Ошибка при обновлении пользователя:', err);
-      return res.status(500).json({ error: err.message });
-    }
+router.put('/:id', async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { email, password, lastname, firstname, midlename, role, status, department } = req.body;
+    
+    await User.updateAsync(id, { email, password, lastname, firstname, midlename, role, status, department });
     console.log(`Пользователь ${id} успешно обновлен`);
     res.json({ message: 'User updated successfully' });
-  });
+  } catch (err) {
+    console.error('Ошибка при обновлении пользователя:', err);
+    return res.status(500).json({ error: err.message });
+  }
 });
 
 // Удаление пользователя
-router.delete('/:id', (req, res) => {
-  const { id } = req.params;
-  User.delete(id, (err) => {
-    if (err) {
-      return res.status(500).json({ error: err.message });
-    }
+router.delete('/:id', async (req, res) => {
+  try {
+    const { id } = req.params;
+    await User.deleteAsync(id);
     res.json({ message: 'User deleted successfully' });
-  });
+  } catch (err) {
+    return res.status(500).json({ error: err.message });
+  }
 });
 
 export default router;

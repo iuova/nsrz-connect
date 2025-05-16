@@ -157,22 +157,18 @@ describe('UsersEditor компонент', () => {
     fireEvent.change(departmentSelect, { target: { value: 'ИТ отдел' } });
     
     logTestStep('Выбираем роль');
-    // Получаем все выпадающие списки
-    const selects = screen.getAllByRole('combobox');
-    console.log(`Найдено ${selects.length} выпадающих списков`);
-    
-    // Селект роли должен быть вторым
-    const roleSelect = selects[1];
-    console.log('Выбираем селект роли');
-    fireEvent.change(roleSelect, { target: { value: 'user' } });
-    console.log('Установили значение роли: user');
+    // Получаем селект роли по тексту лейбла
+    const roleSelect = screen.getByLabelText(/Роль:/i);
+     console.log('Выбираем селект роли');
+     fireEvent.change(roleSelect, { target: { value: 'user' } });
+     console.log('Установили значение роли: user');
     
     logTestStep('Выбираем статус');
-    // Селект статуса должен быть третьим
-    const statusSelect = selects[2];
-    console.log('Выбираем селект статуса');
-    fireEvent.change(statusSelect, { target: { value: 'active' } });
-    console.log('Установили значение статуса: active');
+    // Получаем селект статуса по тексту лейбла
+    const statusSelect = screen.getByLabelText(/Статус:/i);
+     console.log('Выбираем селект статуса');
+     fireEvent.change(statusSelect, { target: { value: 'active' } });
+     console.log('Установили значение статуса: active');
     
     logTestStep('Нажимаем кнопку "Сохранить"');
     fireEvent.click(screen.getByText('Сохранить'));
@@ -270,8 +266,9 @@ describe('UsersEditor компонент', () => {
     console.log('✓ Поле пароля изначально скрыто (type="password")');
     
     logTestStep('Находим кнопку переключения пароля и кликаем');
-    const toggleButton = screen.getByRole('button', { name: '' });
-    fireEvent.click(toggleButton);
+    const toggleButton = screen.getByLabelText(/показать\/скрыть пароль/i) || 
+                         screen.getByTestId('toggle-password-visibility');
+     fireEvent.click(toggleButton);
     console.log('Выполнен клик по кнопке переключения видимости пароля');
     
     logTestStep('Проверяем, что тип поля изменился');

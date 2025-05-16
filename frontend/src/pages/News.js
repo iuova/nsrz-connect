@@ -3,7 +3,10 @@ import axios from 'axios';
 import Navbar from '../components/Navbar';
 import './News.css';
 
-const API_BASE = process.env.REACT_APP_API_URL || 'http://localhost:5000';
+if (!process.env.REACT_APP_API_URL) {
+  throw new Error('REACT_APP_API_URL env variable is not set');
+}
+const API_BASE = process.env.REACT_APP_API_URL;
 
 const News = () => {
   const [news, setNews] = useState([]);
