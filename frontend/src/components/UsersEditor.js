@@ -9,7 +9,7 @@ const UsersEditor = ({ user, onSave, onCancel }) => {
     password: '',
     lastname: user?.lastname || '',
     firstname: user?.firstname || '',
-    midlename: user?.midlename || '',
+    middlename: user?.middlename || '',
     role: user?.id ? user?.role || 'user' : '',
     status: user?.id ? user?.status || 'active' : '',
     department_id: user?.department_id || ''
@@ -20,21 +20,22 @@ const UsersEditor = ({ user, onSave, onCancel }) => {
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState('');
   
-  useEffect(() => {
-    const fetchDepartments = async () => {
-      setLoading(true);
-      try {
-        const data = await getDepartments();
-        setDepartments(data);
-        if (!user?.id && data.length > 0) {
-          setFormData(prev => ({ ...prev, department_id: data[0].id }));
-        }
-      } catch (error) {
-        console.error('Error fetching departments:', error);
-      } finally {
-        setLoading(false);
-      }
-    };
+useEffect(() => {
+     const fetchDepartments = async () => {
+       setLoading(true);
+       try {
+         const data = await getDepartments();
+         setDepartments(data);
+         if (!user?.id && data.length > 0) {
+           setFormData(prev => ({ ...prev, department_id: data[0].id }));
+         }
+       } catch (error) {
+         console.error('Error fetching departments:', error);
+        setError('Ошибка загрузки подразделений');
+       } finally {
+         setLoading(false);
+       }
+     };
     
     fetchDepartments();
   }, [user?.id]);
@@ -46,7 +47,7 @@ const UsersEditor = ({ user, onSave, onCancel }) => {
         password: '',
         lastname: user.lastname || '',
         firstname: user.firstname || '',
-        midlename: user.midlename || '',
+        middlename: user.middlename || '',
         role: user.role || 'user',
         status: user.status || 'active',
         department_id: user.department_id || ''
@@ -63,9 +64,20 @@ const UsersEditor = ({ user, onSave, onCancel }) => {
     e.preventDefault();
     setError('');
     
-    if (!formData.email || !formData.firstname || !formData.lastname || !formData.department_id || !formData.role || !formData.status) {
-      setError('Пожалуйста, заполните все обязательные поля');
-      return;
+    const requiredFields = {
+      email: 'Email',
+      firstname: 'Имя',
+      lastname: 'Фамилия',
+      department_id: 'Подразделение',
+      role: 'Роль',
+      status: 'Статус'
+    };
+    
+    for (const [field, label] of Object.entries(requiredFields)) {
+      if (!formData[field]) {
+        setError(`Поле "${label}" обязательно для заполнения`);
+        return;
+      }
     }
     
     if (!user?.id && !formData.password) {
@@ -82,21 +94,28 @@ const UsersEditor = ({ user, onSave, onCancel }) => {
       onSave();
     } catch (error) {
       console.error('Error saving user:', error);
-      setError(error.response?.data?.error || error.message || 'Ошибка сохранения');
+      let errorMessage = 'Ошибка сохранения';
+      if (error.response?.data?.error) {
+        errorMessage = error.response.data.error;
+      } else if (error.response?.data?.message) {
+        errorMessage = error.response.data.message;
+      } else if (error.message) {
+        errorMessage = error.message;
+      }
+      setError(errorMessage);
     }
   };
   
   const togglePasswordVisibility = () => {
     setShowPassword(!showPassword);
   };
-  
-  const roles = [
-    { value: 'admin', label: 'Администратор' },
-    { value: 'user', label: 'Пользователь' },
-    { value: 'hr', label: 'Кадровый сотрудник' }
-  ];
-  
-  const statuses = [
+const ROLES = [
+  { value: 'admin', label: 'Администратор' },
+  { value: 'user', label: 'Пользователь' },
+  { value: 'hr', label: 'Кадровый сотрудник' }
+];
+
+const STATUSES = [
     { value: 'active', label: 'Активный' },
     { value: 'blocked', label: 'Заблокирован' }
   ];
@@ -142,8 +161,8 @@ const UsersEditor = ({ user, onSave, onCancel }) => {
             Отчество:
             <input
               type="text"
-              name="midlename"
-              value={formData.midlename}
+              name="middlename"
+              value={formData.middlename}
               onChange={handleChange}
             />
           </label>
@@ -153,34 +172,40 @@ const UsersEditor = ({ user, onSave, onCancel }) => {
           <div className="form-group form-group-department">
             <label>
               Подразделение:
-              <select
-                name="department_id"
-                value={formData.department_id}
-                onChange={handleChange}
-                required
-                disabled={loading}
-                className="select-placeholder"
-              >
-               <option value="" disabled>Выберите подразделение</option>
-                {departments.map(dept => (
-                  <option key={dept.id} value={dept.id}>
-                    {dept.name}
-                  </option>
-                ))}
-              </select>
+<select
+               name="department_id"
+               value={formData.department_id}
+               onChange={handleChange}
+               required
+               disabled={loading}
+               className="select-placeholder"
+             >
+              <option value="" disabled>Выберите подразделение</option>
+              {loading && <option value="" disabled>Загрузка...</option>}
+              {!loading && departments.length === 0 && (
+                <option value="" disabled>Нет доступных подразделений</option>
+              )}
+               {departments.map(dept => (
+                 <option key={dept.id} value={dept.id}>
+                   {dept.name}
+                 </option>
+               ))}
+             </select>
             </label>
           </div>
 
           <div className="form-group form-group-email">
             <label>
               Email:
-              <input
-                type="email"
-                name="email"
-                value={formData.email}
-                onChange={handleChange}
-                required
-              />
+<input
+               type="email"
+               name="email"
+               value={formData.email}
+               onChange={handleChange}
+              pattern="[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}"
+              title="Введите корректный email адрес"
+               required
+             />
             </label>
           </div>
 
@@ -219,7 +244,7 @@ const UsersEditor = ({ user, onSave, onCancel }) => {
                 className="select-placeholder"
               >
                 <option value="" disabled>Выберите роль</option>
-                {roles.map(role => (
+                {ROLES.map(role => (
                   <option key={role.value} value={role.value}>
                     {role.label}
                   </option>
@@ -239,7 +264,7 @@ const UsersEditor = ({ user, onSave, onCancel }) => {
                 className="select-placeholder"
               >
                 <option value="" disabled>Выберите статус</option>
-                {statuses.map(status => (
+                {STATUSES.map(status => (
                   <option key={status.value} value={status.value}>
                     {status.label}
                   </option>
