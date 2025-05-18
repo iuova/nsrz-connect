@@ -6,13 +6,13 @@ const router = express.Router();
 // Создание нового отдела
 router.post('/', async (req, res) => {
   try {
-    const { name, fullname, code_zup, organization } = req.body;
+    const { name, fullname, code_zup, organization, parent_id } = req.body;
     
     if (!name || !fullname || !code_zup || !organization) {
       return res.status(400).json({ error: 'Все поля обязательны для заполнения' });
     }
 
-    const id = await Department.create({ name, fullname, code_zup, organization });
+    const id = await Department.create({ name, fullname, code_zup, organization, parent_id });
     res.status(201).json({ id });
   } catch (err) {
     console.error('Ошибка создания отдела:', err);
@@ -20,10 +20,10 @@ router.post('/', async (req, res) => {
   }
 });
 
-// Получение всех отделов
+// Получение всех отделов с сотрудниками
 router.get('/', async (req, res) => {
   try {
-    const departments = await Department.getAll();
+    const departments = await Department.getAllWithEmployees();
     res.json(departments);
   } catch (err) {
     console.error('Ошибка получения отделов:', err);
@@ -97,6 +97,16 @@ router.delete('/:id', async (req, res) => {
     res.status(204).end();
   } catch (err) {
     console.error('Ошибка удаления отдела:', err);
+    res.status(500).json({ error: 'Ошибка сервера' });
+  }
+});
+
+// Получить иерархию подразделений
+router.get('/hierarchy', async (req, res) => {
+  try {
+    const hierarchy = await Department.getHierarchy();
+    res.json(hierarchy);
+  } catch (err) {
     res.status(500).json({ error: 'Ошибка сервера' });
   }
 });

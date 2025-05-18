@@ -51,7 +51,9 @@ db.serialize(() => {
     name TEXT NOT NULL,
     fullname TEXT NOT NULL,
     code_zup TEXT NOT NULL,
-    organization TEXT NOT NULL
+    parent_id INTEGER NOT NULL,
+    organization TEXT NOT NULL,
+    FOREIGN KEY (department_id) REFERENCES Departments(id)
   )`);
 
   // positions

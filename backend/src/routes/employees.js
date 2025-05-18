@@ -8,7 +8,11 @@ const router = express.Router();
 router.get('/', async (req, res) => {
   try {
     const employees = await Employee.getAll();
-    res.json(employees);
+    const formattedEmployees = employees.map(emp => ({
+      ...emp,
+      middlename: emp.middlename || null // Обработка отсутствия отчества
+    }));
+    res.json(formattedEmployees);
   } catch (error) {
     res.status(500).json({ error: error.message });
   }

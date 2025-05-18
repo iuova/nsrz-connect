@@ -122,6 +122,35 @@ class Employee {
       });
     });
   }
+
+  /**
+   * Получить всех сотрудников с информацией об отделе и должности
+   * @returns {Promise<Array>} Список сотрудников
+   */
+  static async getAllWithEmployees() {
+    return new Promise((resolve, reject) => {
+      db.all(`
+        SELECT 
+          e.id, 
+          e.lastname, 
+          e.firstname, 
+          e.middlename, 
+          e.department_id, 
+          e.position_id, 
+          e.birth_date, 
+          e.hire_date, 
+          e.dismissal_date,
+          d.name as department_name,
+          p.name as position_name
+        FROM employees e
+        JOIN Departments d ON e.department_id = d.id
+        JOIN positions p ON e.position_id = p.id
+      `, [], (err, rows) => {
+        if (err) return reject(err);
+        resolve(rows);
+      });
+    });
+  }
 }
 
 export default Employee;
