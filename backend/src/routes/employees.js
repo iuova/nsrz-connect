@@ -1,5 +1,6 @@
 import express from 'express';
 import Employee from '../models/Employee.js';
+import db from '../db/initDB.js';
 
 const router = express.Router();
 
@@ -94,6 +95,41 @@ router.delete('/:id', async (req, res) => {
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
+});
+
+// Массовая загрузка сотрудников
+router.post('/bulk-upload', async (req, res) => {
+  const employees = req.body.employees;
+  if (!Array.isArray(employees) || employees.length === 0) {
+    return res.status(400).json({ error: 'Нет данных для загрузки' });
+  }
+  // Проверяем, что структура данных совпадает с таблицей employees
+  // Ожидаемые поля:
+  const requiredFields = ['lastname', 'firstname', 'middlename', 'department_id', 'position_id', 'birth_date', 'hire_date', 'dismissal_date'];
+  const missingFields = requiredFields.filter(f => !(f in employees[0]));
+  if (missingFields.length > 0) {
+    return res.status(400).json({ error: 'Некорректная структура данных. Отсутствуют поля: ' + missingFields.join(', ') });
+  }
+  const placeholders = requiredFields.map(() => '?').join(',');
+  const sql = `INSERT INTO employees (${requiredFields.join(',')}) VALUES (${placeholders})`;
+  const errors = [];
+  for (const emp of employees) {
+    try {
+      const values = requiredFields.map(f => emp[f] ?? null);
+      await new Promise((resolve, reject) => {
+        db.run(sql, values, (err) => {
+          if (err) reject(err); else resolve();
+        });
+      });
+    } catch (err) {
+      console.error('Ошибка при загрузке сотрудника:', emp, err);
+      errors.push({ emp, error: err.message });
+    }
+  }
+  if (errors.length > 0) {
+    return res.status(500).json({ error: 'Часть сотрудников не загружена', details: errors });
+  }
+  res.json({ success: true });
 });
 
 export default router;

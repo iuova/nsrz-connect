@@ -16,60 +16,6 @@
   color: #d32f2f;
 }
 
-/* Tabs */
-.tabs {
-  display: flex;
-  gap: 1rem;
-  margin-bottom: 2rem;
-}
-
-.tab {
-  padding: 0.75rem 1.5rem;
-  background-color: #f0f0f0;
-  border: none;
-  border-radius: 8px;
-  cursor: pointer;
-  font-size: 1rem;
-  transition: background-color 0.2s;
-}
-
-.tab.active {
-  background-color: #4caf50;
-  color: white;
-}
-
-.tab:hover {
-  background-color: #e0e0e0;
-}
-
-.tab.active:hover {
-  background-color: #388e3c;
-}
-
-/* Add Button (Добавить) */
-.btn-add, .btn-action {
-  display: inline-block;
-  padding: 0.75rem 1.5rem;
-  font-size: 0.9rem;
-  border-radius: 8px;
-  cursor: pointer;
-  margin-right: 0.5rem;
-  margin-bottom: 1.5rem;
-  transition: background-color 0.2s;
-  border: 1px solid transparent;
-}
-
-/* Специфичные стили для кнопки Добавить */
-.btn-add {
-  background-color: #e8f5e9;
-  color: #2e7d32;
-  border-color: #c8e6c9;
-}
-
-.btn-add:hover {
-  background-color: #c8e6c9;
-}
-
 /* News Table */
 .news-table {
   width: 100%;
@@ -114,61 +60,6 @@
   font-weight: 600;
 }
 
-/* Переопределяем стили для кнопок действий */
-.btn-publish {
-  background-color: #e0f7fa;
-  color: #0097a7;
-  border-color: #b2ebf2;
-}
-
-.btn-publish:hover {
-  background-color: #b2ebf2;
-}
-
-.btn-unpublish {
-  background-color: #e8eaf6;
-  color: #3949ab;
-  border-color: #c5cae9;
-}
-
-.btn-unpublish:hover {
-  background-color: #c5cae9;
-}
-
-.btn-delete {
-  background-color: #ffebee;
-  color: #d32f2f;
-  border-color: #ffcdd2;
-}
-
-.btn-delete:hover {
-  background-color: #ffcdd2;
-}
-
-/* Pagination */
-.pagination {
-  display: flex;
-  gap: 0.5rem;
-  margin-top: 1.5rem;
-}
-.pagination button {
-  padding: 0.5rem 1rem;
-  font-size: 0.9rem;
-  border: 1px solid #e1e8ed;
-  background-color: #f9f9f9;
-  cursor: pointer;
-  border-radius: 4px;
-  transition: background-color 0.2s;
-}
-.pagination button:hover {
-  background-color: #e1e8ed;
-}
-.pagination button:disabled {
-  background-color: #f5f5f5;
-  color: #9e9e9e;
-  cursor: not-allowed;
-}
-
 /* Добавим стили для таблицы подразделений */
 .departments-table {
   width: 100%;
@@ -189,15 +80,6 @@
   background-color: #f8fafc;
   color: #2c3e50;
   font-weight: 600;
-}
-
-/* Стили для панели инструментов */
-.actions-toolbar {
-  display: flex;
-  gap: 0.5rem;
-  margin-bottom: 1rem;
-  flex-wrap: wrap;
-  align-items: center;
 }
 
 /* Стили для строк с возможностью выбора */

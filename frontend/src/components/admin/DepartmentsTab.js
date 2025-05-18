@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { getDepartments, deleteDepartment } from '../../api/departmentsApi';
 import DepartmentEditor from '../DepartmentEditor';
 import Pagination from '../common/Pagination';
+import './Tabs.css';
 
 const DepartmentsTab = () => {
   const [departments, setDepartments] = useState([]);

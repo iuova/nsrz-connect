@@ -12,6 +12,7 @@
     "cors": "^2.8.5",
     "debug": "^4.4.0",
     "express": "^5.1.0",
+    "react-scripts": "^5.0.1",
     "sqlite3": "^5.1.7"
   },
   "devDependencies": {

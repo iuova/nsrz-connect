@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { getUsers, deleteUser } from '../../api/usersApi';
 import UsersEditor from '../UsersEditor';
 import Pagination from '../common/Pagination';
+import './Tabs.css';
 
 const UsersTab = () => {
   const [users, setUsers] = useState([]);

@@ -3,11 +3,11 @@ import bcrypt from 'bcryptjs';
 import db from '../src/db/initDB.js';
 
 const userData = {
-  email: 'admin@nsrz.ru',
-  password: 'admin',
-  lastname: 'admin',
-  firstname: 'admin',
-  midlename: 'admin',
+  email: '222@nsrz.ru',
+  password: '222',
+  lastname: '222',
+  firstname: '222',
+  midlename: '222',
   role: 'admin',
   status: 'active'
 };

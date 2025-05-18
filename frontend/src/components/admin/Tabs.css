@@ -1,0 +1,110 @@
+/* Общие стили для вкладок */
+.tabs {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 2rem;
+}
+
+.tab {
+  padding: 0.75rem 1.5rem;
+  background-color: #f0f0f0;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 1rem;
+  transition: background-color 0.2s;
+}
+
+.tab.active {
+  background-color: #4caf50;
+  color: white;
+}
+
+.tab:hover {
+  background-color: #e0e0e0;
+}
+
+.tab.active:hover {
+  background-color: #388e3c;
+}
+
+/* Стили для кнопок действий */
+.btn-add, .btn-action {
+  display: inline-block;
+  padding: 0.75rem 1.5rem;
+  font-size: 0.9rem;
+  border-radius: 8px;
+  cursor: pointer;
+  margin-right: 0.5rem;
+  margin-bottom: 1.5rem;
+  transition: background-color 0.2s;
+  border: 1px solid transparent;
+}
+
+.btn-add {
+  background-color: #e8f5e9;
+  color: #2e7d32;
+  border-color: #c8e6c9;
+}
+
+.btn-add:hover {
+  background-color: #c8e6c9;
+}
+
+.btn-publish {
+  background-color: #e0f7fa;
+  color: #0097a7;
+  border-color: #b2ebf2;
+}
+
+.btn-publish:hover {
+  background-color: #b2ebf2;
+}
+
+.btn-unpublish {
+  background-color: #e8eaf6;
+  color: #3949ab;
+  border-color: #c5cae9;
+}
+
+.btn-unpublish:hover {
+  background-color: #c5cae9;
+}
+
+.btn-delete {
+  background-color: #ffebee;
+  color: #d32f2f;
+  border-color: #ffcdd2;
+}
+
+.btn-delete:hover {
+  background-color: #ffcdd2;
+}
+
+/* Стили для панели инструментов */
+.actions-toolbar {
+  display: flex;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+/* Добавим в конец файла новые стили для выравнивания */
+
+.users-table th {
+  vertical-align: top; /* Выравнивание по верхнему краю */
+  text-align: left;    /* Выравнивание по левому краю */
+  padding-top: 12px;   /* Добавим отступ сверху для лучшего вида */
+}
+
+.users-table td {
+  text-align: left;    /* Выравнивание содержимого ячеек по левому краю */
+}
+
+/* Для предпросмотра загружаемых данных */
+.users-table.preview th,
+.users-table.preview td {
+  text-align: left;
+  vertical-align: top;
+}

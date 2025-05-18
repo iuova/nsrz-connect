@@ -30,14 +30,15 @@ db.serialize(() => {
     published BOOLEAN DEFAULT 0,
     createdAt DATETIME DEFAULT CURRENT_TIMESTAMP
   )`);
-// users
+
+  // users
   db.run(`CREATE TABLE IF NOT EXISTS users (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     email TEXT NOT NULL,
     password TEXT NOT NULL,
     lastname TEXT NOT NULL,
     firstname TEXT NOT NULL,
-    midlename TEXT,
+    middlename TEXT,
     role TEXT NOT NULL,
     status TEXT NOT NULL,
     department_id INTEGER NOT NULL,

@@ -3,6 +3,7 @@ import { useAuth } from '../context/AuthContext';
 import NewsTab from '../components/admin/NewsTab';
 import UsersTab from '../components/admin/UsersTab';
 import DepartmentsTab from '../components/admin/DepartmentsTab';
+import EmployeesTab from '../components/admin/EmployeesTab';
 import './AdminPanel.css';
 
 const AdminPanel = () => {
@@ -34,11 +35,18 @@ const AdminPanel = () => {
         >
           Управление структурой
         </button>
+        <button
+          className={`tab ${activeTab === 'employees' ? 'active' : ''}`}
+          onClick={() => setActiveTab('employees')}
+        >
+          Управление сотрудниками
+        </button>
       </div>
 
       {activeTab === 'news' && <NewsTab />}
       {activeTab === 'users' && <UsersTab />}
       {activeTab === 'departments' && <DepartmentsTab />}
+      {activeTab === 'employees' && <EmployeesTab />}
     </div>
   );
 };

@@ -10,6 +10,7 @@ import Structure from './pages/Structure';
 import Phonebook from './pages/Phonebook';
 import Resources from './pages/Resources';
 import AdminPanel from './pages/AdminPanel';
+import EmployeesTab from './components/admin/EmployeesTab';
 import './App.css';
 
 function App() {

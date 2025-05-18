@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { getNews, deleteNews, publishNews } from '../../api/newsApi';
 import NewsEditor from '../NewsEditor';
 import Pagination from '../common/Pagination';
+import './Tabs.css';
 
 const NewsTab = () => {
   const [news, setNews] = useState([]);

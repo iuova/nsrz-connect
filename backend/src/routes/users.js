@@ -11,9 +11,10 @@ router.post('/login', async (req, res) => {
 
   try {
     // Ищем пользователя по email
-
- // Better approach: Modify the User model to return Promises
- const user = await User.findByEmailAsync(email);
+    const user = await User.findByEmail(email);
+    console.log('user:', user);
+    console.log('email from request:', email);
+    console.log('password from request:', password);
     if (!user) {
       console.log('Пользователь не найден');
       return res.status(401).json({ success: false, message: 'Неверный email или пароль' });
@@ -21,6 +22,7 @@ router.post('/login', async (req, res) => {
 
     // Проверяем пароль
     const isPasswordValid = await bcrypt.compare(password, user.password);
+    console.log('isPasswordValid:', isPasswordValid);
     if (!isPasswordValid) {
       console.log('Неверный пароль');
       return res.status(401).json({ success: false, message: 'Неверный email или пароль' });
@@ -83,11 +85,15 @@ router.get('/', async (req, res) => {
 router.get('/:id', async (req, res) => {
   try {
     const { id } = req.params;
-    const user = await User.findByIdAsync(id);
-    if (!user) {
-      return res.status(404).json({ error: 'User not found' });
-    }
-    res.json(user);
+    User.findById(id, (err, user) => {
+      if (err) {
+        return res.status(500).json({ error: err.message });
+      }
+      if (!user) {
+        return res.status(404).json({ error: 'User not found' });
+      }
+      res.json(user);
+    });
   } catch (err) {
     return res.status(500).json({ error: err.message });
   }
@@ -97,11 +103,15 @@ router.get('/:id', async (req, res) => {
 router.put('/:id', async (req, res) => {
   try {
     const { id } = req.params;
-    const { email, password, lastname, firstname, midlename, role, status, department } = req.body;
-    
-    await User.updateAsync(id, { email, password, lastname, firstname, midlename, role, status, department });
-    console.log(`Пользователь ${id} успешно обновлен`);
-    res.json({ message: 'User updated successfully' });
+    const { email, password, lastname, firstname, midlename, role, status, department_id } = req.body;
+    User.update(id, { email, password, lastname, firstname, midlename, role, status, department_id }, (err) => {
+      if (err) {
+        console.error('Ошибка при обновлении пользователя:', err);
+        return res.status(500).json({ error: err.message });
+      }
+      console.log(`Пользователь ${id} успешно обновлен`);
+      res.json({ message: 'User updated successfully' });
+    });
   } catch (err) {
     console.error('Ошибка при обновлении пользователя:', err);
     return res.status(500).json({ error: err.message });
@@ -112,8 +122,12 @@ router.put('/:id', async (req, res) => {
 router.delete('/:id', async (req, res) => {
   try {
     const { id } = req.params;
-    await User.deleteAsync(id);
-    res.json({ message: 'User deleted successfully' });
+    User.delete(id, (err) => {
+      if (err) {
+        return res.status(500).json({ error: err.message });
+      }
+      res.json({ message: 'User deleted successfully' });
+    });
   } catch (err) {
     return res.status(500).json({ error: err.message });
   }
