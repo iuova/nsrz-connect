@@ -1,5 +1,7 @@
 import db from '../db/initDB.js';
 import bcrypt from 'bcryptjs'; // Используем bcryptjs
+import pkg from 'validator';
+const { isEmail } = pkg;
 
 class User {
   static async create({ email, password, lastname, firstname, middlename, role, status, department_id }) {
@@ -32,35 +34,61 @@ class User {
     });
   }
 
-  static findAll(callback) {
-    const sql = `SELECT * FROM users`;
-    db.all(sql, [], callback);
-  }
-
-  static findById(id, callback) {
-    const sql = `SELECT * FROM users WHERE id = ?`;
-    db.get(sql, [id], callback);
-  }
-
-  static update(id, { email, password, lastname, firstname, middlename, role, status, department_id }, callback) {
-    // Если пароль пустой, обновляем все поля кроме пароля
-    if (!password) {
-      const sql = `UPDATE users SET email = ?, lastname = ?, firstname = ?, middlename = ?, role = ?, status = ?, department_id = ? WHERE id = ?`;
-      db.run(sql, [email, lastname, firstname, middlename, role, status, department_id, id], callback);
-    } else {
-      // Если пароль не пустой, хэшируем его и обновляем все поля
-      bcrypt.hash(password, 10, (err, hash) => {
-        if (err) return callback(err);
-        
-        const sql = `UPDATE users SET email = ?, password = ?, lastname = ?, firstname = ?, middlename = ?, role = ?, status = ?, department_id = ? WHERE id = ?`;
-        db.run(sql, [email, hash, lastname, firstname, middlename, role, status, department_id, id], callback);
+  static async findAll() {
+    return new Promise((resolve, reject) => {
+      db.all('SELECT * FROM users', [], (err, rows) => {
+        if (err) return reject(err);
+        resolve(rows);
       });
-    }
+    });
   }
 
-  static delete(id, callback) {
-    const sql = `DELETE FROM users WHERE id = ?`;
-    db.run(sql, [id], callback);
+  static async findById(id) {
+    return new Promise((resolve, reject) => {
+      db.get('SELECT * FROM users WHERE id = ?', [id], (err, row) => {
+        if (err) return reject(err);
+        resolve(row || null);
+      });
+    });
+  }
+
+  static async update(id, { email, password, lastname, firstname, middlename, role, status, department_id }) {
+    const user = await this.findById(id);
+    if (!user) {
+      throw new Error('Пользователь не найден');
+    }
+
+    if (email && !isEmail(email)) {
+      throw new Error('Некорректный email');
+    }
+
+    return new Promise((resolve, reject) => {
+      if (!password) {
+        const sql = `UPDATE users SET email = ?, lastname = ?, firstname = ?, middlename = ?, role = ?, status = ?, department_id = ? WHERE id = ?`;
+        db.run(sql, [email, lastname, firstname, middlename, role, status, department_id, id], function(err) {
+          if (err) return reject(err);
+          resolve(this.changes > 0);
+        });
+      } else {
+        bcrypt.hash(password, 10, (err, hash) => {
+          if (err) return reject(err);
+          const sql = `UPDATE users SET email = ?, password = ?, lastname = ?, firstname = ?, middlename = ?, role = ?, status = ?, department_id = ? WHERE id = ?`;
+          db.run(sql, [email, hash, lastname, firstname, middlename, role, status, department_id, id], function(err) {
+            if (err) return reject(err);
+            resolve(this.changes > 0);
+          });
+        });
+      }
+    });
+  }
+
+  static async delete(id) {
+    return new Promise((resolve, reject) => {
+      db.run('DELETE FROM users WHERE id = ?', [id], function(err) {
+        if (err) return reject(err);
+        resolve(this.changes > 0);
+      });
+    });
   }
 }
 

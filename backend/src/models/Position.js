@@ -44,13 +44,31 @@ class Position {
 
   // Обновить должность
   static async update(id, { name, department_id }) {
+    const position = await this.findById(id);
+    if (!position) {
+      throw new Error('Должность не найдена');
+    }
+
     return new Promise((resolve, reject) => {
       db.run(
-        `UPDATE positions SET name = ?, department_id = ? WHERE id = ?`,
+        'UPDATE positions SET name = ?, department_id = ? WHERE id = ?',
         [name, department_id, id],
         function(err) {
           if (err) return reject(err);
           resolve(this.changes > 0);
+        }
+      );
+    });
+  }
+
+  static async getByDepartmentId(department_id) {
+    return new Promise((resolve, reject) => {
+      db.all(
+        'SELECT * FROM positions WHERE department_id = ?',
+        [department_id],
+        (err, rows) => {
+          if (err) return reject(err);
+          resolve(rows);
         }
       );
     });

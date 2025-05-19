@@ -61,3 +61,23 @@ export const deleteDepartment = async (id) => {
     throw error;
   }
 };
+
+/**
+ * Получить иерархию отделов (плоский массив для построения дерева)
+ * @returns {Promise<Array>} Массив отделов
+ */
+export const getDepartmentsHierarchy = async () => {
+  // Просто возвращаем все отделы, а дерево строится на фронте
+  return getDepartments();
+};
+
+export const fetchDepartments = async () => {
+  const response = await fetch('/api/departments');
+  console.log('Response:', response);
+  const text = await response.text();
+  console.log('Response text:', text);
+  if (!response.ok) {
+    throw new Error('Ошибка загрузки подразделений');
+  }
+  return JSON.parse(text);
+};

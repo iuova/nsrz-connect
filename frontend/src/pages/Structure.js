@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import Navbar from '../components/Navbar';
 import './Structure.css';
 import { getDepartments, getDepartmentsHierarchy } from '../api/departmentsApi'; // Используем существующий метод
+import { getUsers } from '../api/usersApi'; // Импортируем функцию для получения сотрудников
 
 const Structure = () => {
   const [structure, setStructure] = useState(null);
@@ -10,10 +11,18 @@ const Structure = () => {
   useEffect(() => {
     const loadStructure = async () => {
       try {
-        const departments = await getDepartmentsHierarchy(); // Новый метод API
+        const [departments, users] = await Promise.all([
+          getDepartmentsHierarchy(),
+          getUsers()
+        ]);
+        // Добавляем сотрудников к отделам
+        const departmentsWithEmployees = departments.map(dept => ({
+          ...dept,
+          employees: users.filter(emp => emp.department_id === dept.id)
+        }));
         setStructure({
           name: 'НСРЗ',
-          departments: buildTree(departments) // Функция для построения дерева
+          departments: buildTree(departmentsWithEmployees)
         });
       } catch (error) {
         console.error('Ошибка загрузки структуры:', error);

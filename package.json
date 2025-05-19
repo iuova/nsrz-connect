@@ -9,13 +9,15 @@
     "react-d3-tree": "^3.6.6",
     "react-quill": "^2.0.0",
     "sqlite3": "^5.1.7",
+    "validator": "^13.15.0",
     "web-vitals": "^2.1.4"
   },
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
-    "eject": "react-scripts eject"
+    "eject": "react-scripts eject",
+    "reset-deps": "rm -rf node_modules package-lock.json && npm install"
   },
   "eslintConfig": {
     "extends": [

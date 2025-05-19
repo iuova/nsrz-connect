@@ -89,6 +89,22 @@
   box-shadow: 0 0 0 2px rgba(76, 175, 80, 0.2);
 }
 
+.editor-form select {
+  width: 100%;
+  padding: 0.8rem;
+  margin-top: 0.5rem;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 1rem;
+  background-color: white;
+}
+
+.editor-form select:focus {
+  outline: none;
+  border-color: #4caf50;
+  box-shadow: 0 0 0 2px rgba(76, 175, 80, 0.2);
+}
+
 .form-actions {
   display: flex;
   justify-content: flex-end;
@@ -144,4 +160,53 @@
   .btn-cancel {
     width: 100%;
   }
+}
+
+.id-label {
+  margin-bottom: 1rem;
+  font-weight: 500;
+  color: #333;
+  text-align: right;
+  width: 100%;
+}
+
+.id-label span {
+  display: inline-block;
+  padding: 0.5rem;
+  background: #f5f5f5;
+  border-radius: 4px;
+  border: 1px solid #ddd;
+}
+
+.id-field {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  background: #f5f5f5;
+  padding: 0.5rem;
+  border-radius: 4px;
+  border: 1px solid #ddd;
+}
+
+.id-field label {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 0;
+}
+
+.id-field input {
+  width: 80px;
+  background: #f5f5f5;
+  border: none;
+  color: #666;
+  cursor: not-allowed;
+}
+
+.compact-input {
+  width: auto;
+  max-width: 100px;
+  background: #f5f5f5;
+  color: #666;
+  cursor: not-allowed;
 } 

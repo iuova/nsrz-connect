@@ -58,6 +58,11 @@ class Department {
    * @returns {Promise<boolean>} Успешность операции
    */
   static async update(id, { name, fullname, code_zup, organization }) {
+    const department = await this.findById(id);
+    if (!department) {
+      throw new Error('Отдел не найден');
+    }
+
     return new Promise((resolve, reject) => {
       db.run(
         `UPDATE Departments SET 

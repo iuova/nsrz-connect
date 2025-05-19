@@ -142,5 +142,3 @@
 - `frontend/src/components/admin/Tabs.css`
 - `frontend/src/pages/AdminPanel.css`
 - `frontend/src/components/common/Pagination.js`
-
-Коммит: `a1b2c3d` (пример хеша, заменить на актуальный)

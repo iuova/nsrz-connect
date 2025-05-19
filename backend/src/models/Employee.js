@@ -88,6 +88,11 @@ class Employee {
     hire_date,
     dismissal_date = null
   }) {
+    const employee = await this.findById(id);
+    if (!employee) {
+      throw new Error('Сотрудник не найден');
+    }
+
     return new Promise((resolve, reject) => {
       db.run(
         `UPDATE employees SET 

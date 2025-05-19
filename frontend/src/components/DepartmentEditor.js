@@ -1,14 +1,39 @@
-import React, { useState } from 'react';
-import { createDepartment, updateDepartment } from '../api/departmentsApi';
+import React, { useState, useEffect } from 'react';
+import { createDepartment, updateDepartment, fetchDepartments } from '../api/departmentsApi';
 import './DepartmentEditor.css';
 
 const DepartmentEditor = ({ department, onSave, onCancel }) => {
   const [formData, setFormData] = useState({
+    id: department?.id || '',
     name: department?.name || '',
     fullname: department?.fullname || '',
     code_zup: department?.code_zup || '',
-    organization: department?.organization || ''
+    organization: department?.organization || '',
+    parent_id: department?.parent_id || ''
   });
+  const [departments, setDepartments] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
+
+  useEffect(() => {
+    const loadDepartments = async () => {
+      setLoading(true);
+      try {
+        const data = await fetchDepartments();
+        setDepartments(data);
+        if (!department?.id && data.length > 0) {
+          setFormData(prev => ({ ...prev, parent_id: data[0].id }));
+        }
+      } catch (error) {
+        console.error('Ошибка загрузки подразделений:', error);
+        setError('Ошибка загрузки подразделений');
+        setDepartments([]);
+      } finally {
+        setLoading(false);
+      }
+    };
+    loadDepartments();
+  }, [department?.id]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -25,7 +50,7 @@ const DepartmentEditor = ({ department, onSave, onCancel }) => {
       }
       onSave();
     } catch (error) {
-      console.error('Error saving department:', error);
+      console.error('Ошибка сохранения подразделения:', error);
     }
   };
 
@@ -41,6 +66,10 @@ const DepartmentEditor = ({ department, onSave, onCancel }) => {
         
         <h2>{department?.id ? 'Подразделение (редактирование)' : 'Подразделение (создание)'}</h2>
         
+        <div className="id-label">
+          <span>ID: {formData.id}</span>
+        </div>
+
         <label>
           Название:
           <input
@@ -83,6 +112,28 @@ const DepartmentEditor = ({ department, onSave, onCancel }) => {
             onChange={handleChange}
             required
           />
+        </label>
+
+        <label>
+          Родитель:
+          <select
+            name="parent_id"
+            value={formData.parent_id}
+            onChange={handleChange}
+            disabled={loading}
+            className="select-placeholder"
+          >
+            <option value="" disabled>Выберите родительское подразделение</option>
+            {loading && <option value="" disabled>Загрузка...</option>}
+            {!loading && departments.length === 0 && (
+              <option value="" disabled>Нет доступных подразделений</option>
+            )}
+            {departments.map(dept => (
+              <option key={dept.id} value={dept.id}>
+                {dept.name}
+              </option>
+            ))}
+          </select>
         </label>
 
         <div className="form-actions">

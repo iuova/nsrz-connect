@@ -4,6 +4,8 @@ import axios from 'axios';
 import './Tabs.css';
 import Pagination from '../common/Pagination';
 
+const API_BASE = process.env.REACT_APP_API_BASE || 'http://localhost:5000';
+
 const EmployeesTab = () => {
   const [excelData, setExcelData] = useState([]);
   const [uploadStatus, setUploadStatus] = useState('');
@@ -77,7 +79,7 @@ const EmployeesTab = () => {
     setLoading(true);
     setError('');
     try {
-      const res = await axios.get('/api/employees');
+      const res = await axios.get(`${API_BASE}/api/employees`);
       setEmployees(res.data);
     } catch (err) {
       setError('Ошибка загрузки сотрудников: ' + (err.response?.data?.error || err.message));
@@ -95,7 +97,7 @@ const EmployeesTab = () => {
     console.log('Отправляемые данные:', excelData); // для отладки
     try {
       setUploadStatus('Загрузка...');
-      const response = await axios.post('/api/employees/bulk-upload', { employees: excelData });
+      const response = await axios.post(`${API_BASE}/api/employees/bulk-upload`, { employees: excelData });
       
       if (response.data.error) {
         // Обработка ошибок от сервера
