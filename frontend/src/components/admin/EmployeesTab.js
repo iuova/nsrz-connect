@@ -3,6 +3,7 @@ import * as XLSX from 'xlsx';
 import axios from 'axios';
 import './Tabs.css';
 import Pagination from '../common/Pagination';
+import EmployeesEditor from '../EmployeesEditor';
 
 const API_BASE = process.env.REACT_APP_API_BASE || 'http://localhost:5000';
 
@@ -15,6 +16,7 @@ const EmployeesTab = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage] = useState(5);
   const [sortConfig, setSortConfig] = useState({ key: null, direction: 'asc' });
+  const [editingEmployee, setEditingEmployee] = useState(null);
 
   // Создаем объект с переводом названий колонок
   const columnTranslations = {
@@ -159,6 +161,10 @@ const EmployeesTab = () => {
   const indexOfFirstItem = indexOfLastItem - itemsPerPage;
   const currentItems = sortedData.slice(indexOfFirstItem, indexOfLastItem);
 
+  const handleRowDoubleClick = (employee) => {
+    setEditingEmployee(employee);
+  };
+
   return (
     <>
       <div className="actions-toolbar">
@@ -183,9 +189,20 @@ const EmployeesTab = () => {
         <div className="upload-status">{uploadStatus}</div>
       </div>
 
+      {editingEmployee && (
+        <EmployeesEditor
+          employee={editingEmployee}
+          onSave={() => {
+            setEditingEmployee(null);
+            fetchEmployees();
+          }}
+          onCancel={() => setEditingEmployee(null)}
+        />
+      )}
+
       {excelData.length > 0 && (
         <div className="table-wrapper">
-          <h3>Предпросмотр загружаемых сотрудников</h3>
+          <h3>Предпросмотр загружаемы�� сотрудников</h3>
           <table className="users-table preview">
             <thead>
               <tr>
@@ -239,7 +256,7 @@ const EmployeesTab = () => {
               </thead>
               <tbody>
                 {currentItems.map((row, idx) => (
-                  <tr key={idx} className="user-row">
+                  <tr key={idx} className="user-row" onDoubleClick={() => handleRowDoubleClick(row)}>
                     {Object.entries(row)
                       .filter(([key]) => !['department_id', 'position_id'].includes(key))
                       .map(([key, val], i) => {

@@ -1,0 +1,94 @@
+/* Стили скопированы из UsersEditor.css и адаптированы */
+.editor-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+  }
+  
+  .editor-form {
+    background: white;
+    padding: 1.5rem;
+    border-radius: 8px;
+    width: 90%;
+    max-width: 650px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    overflow-y: auto;
+    max-height: 85vh;
+    position: relative;
+  }
+  
+  .close-button {
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    width: 24px;
+    height: 24px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  
+  .close-button::before,
+  .close-button::after {
+    content: '';
+    position: absolute;
+    width: 18px;
+    height: 2px;
+    background-color: #888;
+    transition: background-color 0.2s;
+  }
+  
+  .close-button::before {
+    transform: rotate(45deg);
+  }
+  
+  .close-button::after {
+    transform: rotate(-45deg);
+  }
+  
+  .close-button:hover::before,
+  .close-button:hover::after {
+    background-color: #333;
+  }
+  
+  .editor-form h2 {
+    margin-top: 0;
+    color: #333;
+    margin-bottom: 1rem;
+    font-size: 1.4rem;
+    padding-right: 30px;
+  }
+  
+  .editor-form label {
+    display: block;
+    margin-bottom: 0.5rem; /* Отступ между лейблами и инпутами */
+    color: #555;
+    font-size: 0.9rem;
+  }
+  
+  /* Стили для контейнера групп полей */
+  .form-groups-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 1rem;
+    margin-bottom: 1.5rem; /* Отступ между группами полей и кнопками */
+  }
+  
+  /* Стили для кнопок действий формы */
+  .form-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 1rem;
+    margin-top: 1rem;
+  }
