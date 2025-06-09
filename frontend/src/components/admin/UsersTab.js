@@ -18,10 +18,13 @@ const UsersTab = () => {
   const loadUsers = async () => {
     try {
       const data = await getUsers();
+      console.log('Данные пользователей:', data);
       setUsers(data);
     } catch (err) {
+      console.error('Ошибка при загрузке пользователей:', err);
       setError(err.message);
     } finally {
+      console.log('Загрузка завершена');
       setLoading(false);
     }
   };
@@ -196,7 +199,7 @@ const UsersTab = () => {
               Статус {getSortIcon('status')}
             </th>
             <th onClick={() => requestSort('department')} className="sortable-column">
-              Отдел {getSortIcon('department')}
+              Подразделение {getSortIcon('department')}
             </th>
           </tr>
         </thead>
@@ -220,7 +223,7 @@ const UsersTab = () => {
               <td>{user.email}</td>
               <td>{user.role}</td>
               <td>{user.status}</td>
-              <td>{user.department}</td>
+              <td>{user.department_name}</td>
             </tr>
           ))}
         </tbody>
